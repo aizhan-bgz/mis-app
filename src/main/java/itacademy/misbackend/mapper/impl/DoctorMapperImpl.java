@@ -23,8 +23,8 @@ public class DoctorMapperImpl implements DoctorMapper {
                 .specialization(doctor.getSpecialization())
                 .phoneNumber(doctor.getPhoneNumber())
                 .build();
-     //   if (doctor.getAppointments() != null) {
-      //      dto.setAppointments(new AppointmentMapperImpl().toDtoList(doctor.getAppointments()));}
+        if (doctor.getAppointments() != null) {
+            dto.setAppointments(new AppointmentMapperImpl().toDtoList(doctor.getAppointments()));}
         if (doctor.getDepartment() != null) {
             dto.setDepartmentId(doctor.getDepartment().getId());
         }

@@ -83,39 +83,36 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentDto update(Long id, AppointmentDto appointmentDto) {
         log.info("СТАРТ: AppointmentServiceImpl - update(). Прием с id {}", id);
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-        if (appointment != null) {
-            if (appointmentDto.getReason() != null) {
-                appointment.setReason(appointmentDto.getReason());
-            }
-            if (appointmentDto.getStatus() != null) {
-                appointment.setStatus(appointmentDto.getStatus());
-            }
-            if (appointmentDto.getAppointmentDate() != null) {
-                appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
-            }
-            appointment = appointmentRepo.save(appointment);
-            log.info("КОНЕЦ: AppointmentServiceImpl - update(). Запись приема обновлена - {}", appointment);
-            return appointmentMapper.toDto(appointment);
-        }
 
-        return null;
+        if (appointment == null) {
+            log.error("Запись приема с id " + id + " не найдена!");
+            throw new NotFoundException("Запись приема с id " + id + " не найдена!");
+        }
+        if (appointmentDto.getReason() != null) {
+            appointment.setReason(appointmentDto.getReason());
+        }
+        if (appointmentDto.getAppointmentDate() != null) {
+            appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
+        }
+        appointment = appointmentRepo.save(appointment);
+        log.info("КОНЕЦ: AppointmentServiceImpl - update(). Запись приема обновлена - {}", appointment);
+        return appointmentMapper.toDto(appointment);
     }
 
     @Override
     public String delete(Long id) {
         log.info("СТАРТ: AppointmentServiceImpl - delete(). Прием с id {}", id);
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-
-       // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (appointment != null) {
-            appointment.setDeletedAt(LocalDateTime.now());
-        //    appointment.setDeletedBy(authentication.getName());
-            appointmentRepo.save(appointment);
-            log.info("КОНЕЦ: DoctorServiceImpl - delete(). Запись приема (id {}) удалена", id);
-            return "Запись приема с id " + id + " успешно удалена";
+        if (appointment == null) {
+            log.error("Запись приема с id " + id + " не найдена!");
+            throw new NotFoundException("Запись приема с id " + id + " не найдена!");
         }
-        log.error("Запись приема с id " + id + " не найдена!");
-        return "Запись приема с id " + id + " не найдена";
+        appointment.setDeletedAt(LocalDateTime.now());
+        //    appointment.setDeletedBy(authentication.getName());
+        appointmentRepo.save(appointment);
+        log.info("КОНЕЦ: DoctorServiceImpl - delete(). Запись приема (id {}) удалена", id);
+        return "Запись приема с id " + id + " успешно удалена";
     }
 }

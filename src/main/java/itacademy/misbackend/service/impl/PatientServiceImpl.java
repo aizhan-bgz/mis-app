@@ -1,9 +1,11 @@
 package itacademy.misbackend.service.impl;
 
 import itacademy.misbackend.dto.PatientDto;
+import itacademy.misbackend.entity.MedCard;
 import itacademy.misbackend.entity.Patient;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.PatientMapper;
+import itacademy.misbackend.repo.MedCardRepo;
 import itacademy.misbackend.repo.PatientRepo;
 import itacademy.misbackend.repo.UserRepo;
 import itacademy.misbackend.service.PatientService;
@@ -23,7 +25,7 @@ public class PatientServiceImpl implements PatientService {
     private final PatientRepo patientRepo;
     private final PatientMapper patientMapper;
     private final UserRepo userRepo;
-   // private final MedCardRepo medCardRepo;
+    private final MedCardRepo medCardRepo;
 
     @Override
     public PatientDto create(PatientDto patientDto) {
@@ -32,12 +34,12 @@ public class PatientServiceImpl implements PatientService {
         patient.setUser(userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(patientDto.getUserId()));
         patient = patientRepo.save(patient);
 
-   //     MedCard medCard = new MedCard();
-    //    medCard.setPatient(patient); // Связываем медицинскую карту с пациентом
-    //    medCardRepo.save(medCard);   // Сохраняем медицинскую карту
-
-     //   patient.setMedCard(medCard);
-        patientRepo.save(patient);
+        MedCard medCard = new MedCard();
+        medCard.setId(patient.getId());
+        medCard.setPatient(patient.getFirstName() + " " +
+                            patient.getLastName() + " " +
+                            patient.getPatronymic());
+        medCardRepo.save(medCard);
         log.info("КОНЕЦ: PatientServiceImpl - create {} ", patientMapper.toDto(patient));
         return patientMapper.toDto(patient);
     }
@@ -70,52 +72,53 @@ public class PatientServiceImpl implements PatientService {
     public PatientDto update(Long id, PatientDto patientDto) {
         log.info("СТАРТ: PatientServiceImpl - update(). Пациент с id {}", id);
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-        if (patient != null){
-            if (patientDto.getDateOfBirth() != null){
-                patient.setDateOfBirth(patientDto.getDateOfBirth());
-            }
-            if (patientDto.getSex() != null){
-                patient.setSex(patientDto.getSex());
-            }
-            if (patientDto.getPassport() != null){
-                patient.setPassport(patientDto.getPassport());
-            }
-            if (patientDto.getTaxId() != null){
-                patient.setTaxId(patientDto.getTaxId());
-            }
-            if (patientDto.getAddress() != null){
-                patient.setAddress(patientDto.getAddress());
-            }
-            if (patientDto.getPlaceOfWork() != null){
-                patient.setPlaceOfWork(patientDto.getPlaceOfWork());
-            }
-            patient = patientRepo.save(patient);
-            log.info("КОНЕЦ: PatientServiceImpl - update(). Обновленная запись - {}", patient);
-            return patientMapper.toDto(patient);
+        if (patient == null) {
+            log.error("Пациент с id " + id + " не найден!");
+            throw new NotFoundException("Пациент с id " + id + " не найден");
         }
-        return null;
+        if (patientDto.getDateOfBirth() != null){
+            patient.setDateOfBirth(patientDto.getDateOfBirth());
+        }
+        if (patientDto.getSex() != null){
+            patient.setSex(patientDto.getSex());
+        }
+        if (patientDto.getPassport() != null){
+            patient.setPassport(patientDto.getPassport());
+        }
+        if (patientDto.getTaxId() != null){
+            patient.setTaxId(patientDto.getTaxId());
+        }
+        if (patientDto.getAddress() != null){
+            patient.setAddress(patientDto.getAddress());
+        }
+        if (patientDto.getPlaceOfWork() != null){
+            patient.setPlaceOfWork(patientDto.getPlaceOfWork());
+        }
+        patient = patientRepo.save(patient);
+        log.info("КОНЕЦ: PatientServiceImpl - update(). Обновленная запись - {}", patient);
+        return patientMapper.toDto(patient);
     }
 
     @Override
     public String delete(Long id) {
         log.info("СТАРТ: PatientServiceImpl - delete(). Пациент с id {}", id);
+        //  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-      //  MedCard medCard = medCardRepo.findByDeletedAtIsNullAndId(id);
-      //  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (patient == null) {
             log.error("Пациент с id " + id + " не найден!");
             throw new NotFoundException("Пациент с id " + id + " не найден");
         }
-            patient.setDeletedAt(LocalDateTime.now());
-         //   patient.setDeletedBy(authentication.getName());
-            patientRepo.save(patient);
+        MedCard medCard = medCardRepo.findByDeletedAtIsNullAndId(id);
 
-         ///   medCard.setDeletedAt(LocalDateTime.now());
-         //   medCard.setDeletedBy(authentication.getName());
-         //   medCardRepo.save(medCard);
+        patient.setDeletedAt(LocalDateTime.now());
+        //patient.setDeletedBy(authentication.getName());
+        patientRepo.save(patient);
 
-            log.info("КОНЕЦ: PatientServiceImpl - delete(). Пациент (id {}) удален", id);
-            return "Пациент с id " + id + " удален";
+        medCard.setDeletedAt(LocalDateTime.now());
+        //medCard.setDeletedBy(authentication.getName());
+        medCardRepo.save(medCard);
+
+        log.info("КОНЕЦ: PatientServiceImpl - delete(). Пациент (id {}) удален", id);
+        return "Пациент с id " + id + " удален";
     }
 }

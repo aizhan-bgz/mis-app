@@ -1,6 +1,5 @@
 package itacademy.misbackend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,8 +36,8 @@ public class Doctor {
     @JoinColumn(name = "user_id")
     private User user;
 
- //   @OneToMany(mappedBy = "doctor")
-   // private List<Appointment> appointments;
+    @OneToMany(mappedBy = "doctor")
+    private List<Appointment> appointments;
 
     private LocalDateTime deletedAt;
     private String deletedBy;
@@ -47,7 +46,7 @@ public class Doctor {
     public String toString() {
         return "Doctor [id=" + id
                 + ", department=" + department.getName()
-         //       + ", appointments=" + appointments.stream().map(Appointment::getId).toList()
+                + ", appointments=" + appointments.stream().map(Appointment::getId).toList()
                 + "]";
     }
 }

@@ -8,6 +8,7 @@ import itacademy.misbackend.mapper.MedicalRecordMapper;
 import itacademy.misbackend.repo.AppointmentRepo;
 import itacademy.misbackend.repo.MedicalRecordRepo;
 import itacademy.misbackend.service.MedicalRecordService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 //import org.springframework.security.core.Authentication;
@@ -27,8 +28,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
  //     private final MedCardRepo medCardRepo;
 
 
-    //@Transactional
-      @Override
+    @Transactional
+    @Override
     public MedicalRecordDto create(MedicalRecordDto recordDto) {
         log.info("СТАРТ: MedicalRecordServiceImpl - create() {}", recordDto);
     //    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -39,6 +40,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             throw new NotFoundException("Прием не найден");
         }
         record.setAppointment(appointment);
+        appointment.setStatus("Выполнен");
    //     record.setMedCard(medCardRepo.findByDeletedAtIsNullAndId(
      //           record.getAppointment().getPatient().getId()));
         record.setCreatedAt(LocalDateTime.now());
@@ -57,7 +59,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = repo.findByDeletedAtIsNullAndId(id);
         if (record == null) {
             log.error("Медицинская запись с id " + id + " не найдена!");
-            throw new NullPointerException("Медицинская запись не найдена!");
+            throw new NotFoundException("Медицинская запись не найдена!");
         }
         log.info("КОНЕЦ: MedicalRecordServiceImpl - getById(). Медицинская запись - {} ", record);
         return  mapper.toDto(record);
@@ -69,7 +71,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         List<MedicalRecord> records = repo.findAllByDeletedAtIsNull();
         if (records.isEmpty()) {
             log.error("Записей нет!");
-            throw new NullPointerException("Записей нет!");
+            throw new NotFoundException("Записей нет!");
         }
         log.info("КОНЕЦ: MedicalRecordServiceImpl - getAll()");
         return mapper.toDtoList(records);
@@ -84,7 +86,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = repo.findByDeletedAtIsNullAndId(id);
         if (record == null) {
             log.error("Медицинская запись с id " + id + " не найдена!");
-            throw new NullPointerException("Медицинская запись не найдена!");
+            throw new NotFoundException("Медицинская запись не найдена!");
         }
         log.info("Запись найдена. Исходные данные - {}", record);
 

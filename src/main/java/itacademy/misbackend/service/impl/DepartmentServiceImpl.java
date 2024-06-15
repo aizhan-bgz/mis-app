@@ -2,15 +2,17 @@ package itacademy.misbackend.service.impl;
 
 import itacademy.misbackend.dto.DepartmentDto;
 import itacademy.misbackend.entity.Department;
+import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.DepartmentMapper;
 import itacademy.misbackend.repo.DepartmentRepo;
 import itacademy.misbackend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.channels.NotYetBoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = repo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (department == null) {
             log.error("Отделение с id " + id + " не найдено!");
-            throw new NullPointerException("Отделение не найдено!");
+            throw new NotFoundException("Отделение не найдено!");
         }
         log.info("КОНЕЦ: DepartmentServiceImpl - getById(). Отделение - {} ", department);
         return mapper.toDto(department);
@@ -52,8 +54,8 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("СТАРТ: DepartmentServiceImpl - getAll()");
         var departments = repo.findAllByDeletedAtIsNullAndDeletedByIsNull();
         if (departments.isEmpty()) {
-            log.error("Список отделений пуст");
-            throw new NullPointerException("Отделений нет!");
+            log.error("Отделений нет!");
+            throw new NotFoundException("Список отделений пуст");
         }
         log.info("КОНЕЦ: DepartmentServiceImpl - getAll()");
         return mapper.toDtoList(departments);
@@ -63,37 +65,36 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDto update(Long id, DepartmentDto updateDto) {
         log.info("СТАРТ: DepartmentServiceImpl - update(). Отделение с id {}", id);
         Department department = repo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-        if (department != null){
-            if (updateDto.getName() != null){
-                department.setName(updateDto.getName());
-            }
-            if (updateDto.getDescription() != null){
-                department.setDescription(updateDto.getDescription());
-            }
-            department = repo.save(department);
-            log.info("КОНЕЦ: DepartmentServiceImpl - update(). Отделение обновлено - {}", department);
-            return mapper.toDto(department);
+        if (department == null) {
+            log.error("Отделение с id " + id + " не найдено!");
+            throw new NotFoundException("Отделение не найдено!");
         }
+        if (updateDto.getName() != null){
+            department.setName(updateDto.getName());
+        }
+        if (updateDto.getDescription() != null){
+            department.setDescription(updateDto.getDescription());
+        }
+        department = repo.save(department);
+        log.info("КОНЕЦ: DepartmentServiceImpl - update(). Отделение обновлено - {}", department);
+        return mapper.toDto(department);
 
-        return null;
     }
 
     @Override
     public String delete(Long id) {
         log.info("СТАРТ: DepartmentServiceImpl - delete(). Отделение с id {}", id);
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Department department = repo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (department != null) {
-            department.setDeletedAt(LocalDateTime.now());
-            department.setDeletedBy(authentication.getName());
-            department.setDeletedBy(authentication.getName());
-            repo.save(department);
-            log.info("КОНЕЦ: DepartmentServiceImpl - delete(). Отделение {} удалено", department.getName());
-            return "Отделение " + department.getName() + " удалено";
+        if (department == null) {
+            log.error("Отделение с id " + id + " не найдено!");
+            throw new NotFoundException("Отделение не найдено!");
         }
-        log.error("Отделение с id " + id + " не найдено!");
-        return "Отделение с id " + id + " не найдено";
+        department.setDeletedAt(LocalDateTime.now());
+        // department.setDeletedBy(authentication.getName());
+        repo.save(department);
+        log.info("КОНЕЦ: DepartmentServiceImpl - delete(). Отделение {} удалено", department.getName());
+        return "Отделение " + department.getName() + " удалено";
     }
+
 }

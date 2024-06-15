@@ -1,6 +1,5 @@
 package itacademy.misbackend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,11 +24,10 @@ public class MedicalRecord {
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
-  /*  @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "med_card_id")
     private MedCard medCard;
-*/
+
     private String diagnosis;
     private String prescription;
     private String notes;
@@ -49,7 +47,7 @@ public class MedicalRecord {
         return "MedicalRecord{" +
                 "id=" + id +
                 ", appointment=" + appointment +
-             //   ", medCardID=" + medCard.getId() +
+                ", medCardID=" + medCard.getId() +
                 ", diagnosis=" + diagnosis +
                 ", prescription=" + prescription +
                 ", notes='" + notes + '\'' +

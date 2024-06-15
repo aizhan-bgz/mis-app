@@ -36,5 +36,5 @@ public class DoctorDto {
     private String phoneNumber;
 
     private Long userId;
- //   private List<AppointmentDto> appointments;
+    private List<AppointmentDto> appointments;
 }
