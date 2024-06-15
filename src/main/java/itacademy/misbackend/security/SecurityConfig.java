@@ -63,7 +63,7 @@ public class SecurityConfig {
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.logout().logoutUrl("/api/logout").logoutSuccessUrl("/api/login").invalidateHttpSession(true);
         return http.build();
-    } //Нужно будет добавить позже еще ограничения на доступ к ресурсам
+    }
 
    /* @Bean
     CorsFilter corsFilter() {
