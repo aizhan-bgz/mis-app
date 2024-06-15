@@ -16,8 +16,6 @@ public class UserMapperImpl implements UserMapper {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .password(user.getPassword())
-                .verificationToken(user.getVerificationToken())
                 .enabled(user.isEnabled())
                 .build();
         if (user.getRoles() != null) {

@@ -13,6 +13,7 @@ import itacademy.misbackend.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.PropertyValueException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -92,13 +93,21 @@ public class RoleController {
                     e.getMessage(),
                     ResultCode.NOT_FOUND
             );
+        } catch (DuplicateKeyException e) {
+            return new CustomResponseMessage<>(
+                    null,
+                    ResultCodeAPI.FAIL,
+                    "Ошибка",
+                    e.getMessage(),
+                    ResultCode.FAIL
+            );
         } catch (Exception e) {
             return new CustomResponseMessage<>(
                     null,
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -119,7 +128,7 @@ public class RoleController {
             return new CustomResponseMessage<>(
                     service.findById(id),
                     ResultCodeAPI.SUCCESS,
-                    null,
+                    "Роль по ID успешно получен",
                     null,
                     ResultCode.OK
             );
@@ -137,7 +146,7 @@ public class RoleController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -185,7 +194,7 @@ public class RoleController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -224,7 +233,7 @@ public class RoleController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }

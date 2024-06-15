@@ -6,7 +6,9 @@ import itacademy.misbackend.repo.RoleRepo;
 import itacademy.misbackend.service.RoleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.PropertyValueException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RoleServiceImpl implements RoleService {
     private final RoleRepo roleRepo;
     @Transactional
@@ -21,11 +24,14 @@ public class RoleServiceImpl implements RoleService {
     public Long save(Role role) {
         if (role.getName().isEmpty() || role.getName().isBlank() || role.getName() == null) {
             throw new PropertyValueException("Role", "name", " Наименование роли не может быть пустым");
-        } else {
-            role.setName(role.getName().toUpperCase());
-            Role savedRole = roleRepo.save(role);
-            return savedRole.getId();
         }
+        if (roleRepo.existsByName(role.getName())) {
+            log.error("Роль с таким названием уже существует");
+            throw new DuplicateKeyException("Роль с таким названием уже существует");
+        }
+        role.setName(role.getName().toUpperCase());
+        roleRepo.save(role);
+        return role.getId();
     }
 
     @Override

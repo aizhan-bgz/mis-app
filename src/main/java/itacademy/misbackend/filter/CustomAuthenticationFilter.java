@@ -46,6 +46,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         itacademy.misbackend.entity.User myUser = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndUsername(user.getUsername());
 
+        if (!myUser.isEnabled()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Учетная запись пользователя не активирована.");
+            return;
+        }
+
         AuthenticatedUser authenticatedUser = new AuthenticatedUser();
         authenticatedUser.setId(myUser.getId());
         authenticatedUser.setUsername(myUser.getUsername());
