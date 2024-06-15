@@ -21,7 +21,7 @@ public class EmailServiceImpl implements EmailService {
         emailMessage.setTo(message.getEmail());
         emailMessage.setSubject("Подтверждение профиля");
         emailMessage.setText("Для подтверждения профиля пройдите по ссылке ниже:\n"
-                + "http://localhost:9090/api/register/confirm?token=" + message.getVerificationToken()
+                + "https://it-academy-mis-app-eb8b8e2f87d7.herokuapp.com/api/register/confirm?token=" + message.getVerificationToken()
                 + "&id=" + userService.getUserIdByEmail(message.getEmail()));
         mailSender.send(emailMessage);
     }
