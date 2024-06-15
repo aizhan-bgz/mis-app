@@ -13,8 +13,8 @@ import itacademy.misbackend.service.AppointmentService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -61,7 +61,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (appointment == null) {
             log.error("Запись приема с id " + id + " не найдена!");
-            throw new NullPointerException("Запись приема не найдена!");
+            throw new NotFoundException("Запись приема не найдена!");
         }
         log.info("КОНЕЦ: AppointmentServiceImpl - getById(). Прием - {} ", appointment);
         return appointmentMapper.toDto(appointment);
@@ -73,7 +73,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         var list = (appointmentRepo.findAllByDeletedAtIsNullAndDeletedByIsNull());
         if (list == null) {
             log.error("Список приемов пуст!");
-            throw new NullPointerException("Приемов нет!");
+            throw new NotFoundException("Приемов нет!");
         }
         log.info("КОНЕЦ: AppointmentServiceImpl - getAll()");
         return appointmentMapper.toDtoList(list);
@@ -102,7 +102,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public String delete(Long id) {
         log.info("СТАРТ: AppointmentServiceImpl - delete(). Прием с id {}", id);
-        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (appointment == null) {
@@ -110,7 +110,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new NotFoundException("Запись приема с id " + id + " не найдена!");
         }
         appointment.setDeletedAt(LocalDateTime.now());
-        //    appointment.setDeletedBy(authentication.getName());
+        appointment.setDeletedBy(authentication.getName());
         appointmentRepo.save(appointment);
         log.info("КОНЕЦ: DoctorServiceImpl - delete(). Запись приема (id {}) удалена", id);
         return "Запись приема с id " + id + " успешно удалена";

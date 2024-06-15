@@ -54,8 +54,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/medicalRecords/**").hasAuthority("DOCTOR");
 
         //закомментила, т.к. пока нет юзера с ролью ADMIN
-        http.authorizeHttpRequests().requestMatchers("/api/patients/**", "/api/doctors/**", "/api/departments/**",
-                        "/api/services/**", "/api/appointments/**", "/api/medicalRecords/**").hasAuthority("ADMIN");
+  //      http.authorizeHttpRequests().requestMatchers("/api/patients/**", "/api/doctors/**", "/api/departments/**",
+   //                     "/api/services/**", "/api/appointments/**", "/api/medicalRecords/**").hasAuthority("ADMIN");
 
 
         http.authorizeHttpRequests().anyRequest().permitAll();//Временно

@@ -11,8 +11,8 @@ import itacademy.misbackend.repo.UserRepo;
 import itacademy.misbackend.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -102,7 +102,7 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public String delete(Long id) {
         log.info("СТАРТ: PatientServiceImpl - delete(). Пациент с id {}", id);
-        //  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (patient == null) {
             log.error("Пациент с id " + id + " не найден!");
@@ -111,11 +111,11 @@ public class PatientServiceImpl implements PatientService {
         MedCard medCard = medCardRepo.findByDeletedAtIsNullAndId(id);
 
         patient.setDeletedAt(LocalDateTime.now());
-        //patient.setDeletedBy(authentication.getName());
+        patient.setDeletedBy(authentication.getName());
         patientRepo.save(patient);
 
         medCard.setDeletedAt(LocalDateTime.now());
-        //medCard.setDeletedBy(authentication.getName());
+        medCard.setDeletedBy(authentication.getName());
         medCardRepo.save(medCard);
 
         log.info("КОНЕЦ: PatientServiceImpl - delete(). Пациент (id {}) удален", id);

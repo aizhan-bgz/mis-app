@@ -8,8 +8,8 @@ import itacademy.misbackend.repo.DepartmentRepo;
 import itacademy.misbackend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.nio.channels.NotYetBoundException;
@@ -28,11 +28,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("СТАРТ: DepartmentServiceImpl - create() {}", dto);
         Department department = mapper.toEntity(dto);
         department = repo.save(department);
-        /*
-            Для создания отделения достаточно передать параметры name и description.
-            Список врачей и услуг в отделении пополняется автоматически при их создании.
-            (Если id отделения верно указан и отделение действительно существует)
-         */
         log.info("КОНЕЦ: DepartmentServiceImpl - create {} ", department);
         return mapper.toDto(department);
     }
@@ -84,14 +79,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public String delete(Long id) {
         log.info("СТАРТ: DepartmentServiceImpl - delete(). Отделение с id {}", id);
-        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Department department = repo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (department == null) {
             log.error("Отделение с id " + id + " не найдено!");
             throw new NotFoundException("Отделение не найдено!");
         }
         department.setDeletedAt(LocalDateTime.now());
-        // department.setDeletedBy(authentication.getName());
+        department.setDeletedBy(authentication.getName());
         repo.save(department);
         log.info("КОНЕЦ: DepartmentServiceImpl - delete(). Отделение {} удалено", department.getName());
         return "Отделение " + department.getName() + " удалено";

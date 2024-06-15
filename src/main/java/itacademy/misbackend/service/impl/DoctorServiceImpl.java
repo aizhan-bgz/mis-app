@@ -12,8 +12,8 @@ import itacademy.misbackend.service.DoctorService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,7 +48,7 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = doctorRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (doctor == null) {
             log.error("Врач с id " + id + " не найден!");
-            throw new NullPointerException("Врач не найден!");
+            throw new NotFoundException("Врач не найден!");
         }
         log.info("КОНЕЦ: DoctorServiceImpl - getById(). Врач - {} ", doctor);
         return doctorMapper.toDto(doctor);
@@ -60,7 +60,7 @@ public class DoctorServiceImpl implements DoctorService {
         var doctors = doctorRepo.findAllByDeletedAtIsNullAndDeletedByIsNull();
         if (doctors == null) {
             log.error("Список Врачей пуст!");
-            throw new NullPointerException("Врачей нет!");
+            throw new NotFoundException("Врачей нет!");
         }
         log.info("КОНЕЦ: DoctorServiceImpl - getAll()");
         return doctorMapper.toDtoList(doctors);
@@ -70,44 +70,41 @@ public class DoctorServiceImpl implements DoctorService {
     public DoctorDto update(Long id, DoctorDto updateDto) {
         log.info("СТАРТ: DoctorServiceImpl - update(). Врач с id {}", id);
         Doctor doctor = doctorRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-        if (doctor != null) {
-            if (updateDto.getSpecialization() != null) {
-                doctor.setSpecialization(updateDto.getSpecialization());
-            }
-            if (updateDto.getDepartmentId() != null) {
-                Department department = departmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(updateDto.getDepartmentId());
-                if (department != null) {
-                    doctor.setDepartment(department);
-                    department.getDoctors().add(doctor);
-                    departmentRepo.save(department);
-                } else {
-                    throw new EntityNotFoundException("Отделение с id " + updateDto.getDepartmentId() + " не найдено");
-                }
-            }
-            doctor = doctorRepo.save(doctor);
-            log.info("КОНЕЦ: DoctorServiceImpl - update(). Записи о Враче обновлены - {}", updateDto);
-            return doctorMapper.toDto(doctor);
+        if (doctor == null) {
+            log.error("Врач с id " + id + " не найден!");
+            throw new NotFoundException("Врач не найден!");
         }
-        log.error("Врач с id " + id + " не найден!");
-     //   throw new NullPointerException("Медицинская запись не найдена!");
-        return null;
+        if (updateDto.getSpecialization() != null) {
+            doctor.setSpecialization(updateDto.getSpecialization());
+        }
+        if (updateDto.getDepartmentId() != null) {
+            Department department = departmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(updateDto.getDepartmentId());
+            if (department == null) {
+                log.error("Врач с id " + id + " не найден!");
+                throw new NotFoundException("Отделение с id " + updateDto.getDepartmentId() + " не найдено");
+            }
+            doctor.setDepartment(department);
+            department.getDoctors().add(doctor);
+            departmentRepo.save(department);
+        }
+        doctor = doctorRepo.save(doctor);
+        log.info("КОНЕЦ: DoctorServiceImpl - update(). Записи о Враче обновлены - {}", updateDto);
+        return doctorMapper.toDto(doctor);
     }
 
     @Override
     public String delete(Long id) {
         log.info("СТАРТ: DoctorServiceImpl - delete(). Врач с id {}", id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Doctor doctor = doctorRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-
-        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (doctor != null) {
-            doctor.setDeletedAt(LocalDateTime.now());
-        //    doctor.setDeletedBy(authentication.getName());
-            doctorRepo.save(doctor);
-            log.info("КОНЕЦ: DoctorServiceImpl - delete(). Врач (id {}) удален", id);
-            return "Врач с id " + id + " удален";
+        if (doctor == null) {
+            log.error("Врач с id " + id + " не найден!");
+            throw new NotFoundException("Врач не найден!");
         }
-        log.error("Врач с id " + id + " не найден!");
-        return "Врач с id " + id + " не найден";
+        doctor.setDeletedAt(LocalDateTime.now());
+        doctor.setDeletedBy(authentication.getName());
+        doctorRepo.save(doctor);
+        log.info("КОНЕЦ: DoctorServiceImpl - delete(). Врач (id {}) удален", id);
+        return "Врач с id " + id + " удален";
     }
 }
