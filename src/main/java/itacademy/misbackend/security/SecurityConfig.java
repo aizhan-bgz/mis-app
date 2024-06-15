@@ -14,6 +14,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -54,8 +59,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/medicalRecords/**").hasAuthority("DOCTOR");
 
         //закомментила, т.к. пока нет юзера с ролью ADMIN
-  //      http.authorizeHttpRequests().requestMatchers("/api/patients/**", "/api/doctors/**", "/api/departments/**",
-   //                     "/api/services/**", "/api/appointments/**", "/api/medicalRecords/**").hasAuthority("ADMIN");
+        http.authorizeHttpRequests().requestMatchers("/api/patients/**", "/api/doctors/**", "/api/departments/**",
+                        "/api/services/**", "/api/appointments/**", "/api/medicalRecords/**").hasAuthority("ADMIN");
 
 
         http.authorizeHttpRequests().anyRequest().permitAll();//Временно
@@ -65,7 +70,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-   /* @Bean
+    @Bean
     CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
@@ -79,5 +84,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);
-    }*/
+    }
 }
