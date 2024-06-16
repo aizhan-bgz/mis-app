@@ -1,6 +1,6 @@
 package itacademy.misbackend.service.impl;
 
-import itacademy.misbackend.dto.RegistrationMessage;
+import itacademy.misbackend.dto.EmailMessage;
 import itacademy.misbackend.dto.UserDoctorRequest;
 import itacademy.misbackend.dto.UserPatientRequest;
 import itacademy.misbackend.entity.User;
@@ -22,7 +22,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     public void registerDoctor(UserDoctorRequest userDoctorRequest) {
         UserDoctorRequest user = userService.createDoctor(userDoctorRequest);
 
-        RegistrationMessage message = new RegistrationMessage();
+        EmailMessage message = new EmailMessage();
         message.setEmail(user.getUser().getEmail());
         message.setVerificationToken(user.getUser().getVerificationToken());
         emailService.sendRegistrationMessage(message);
@@ -31,7 +31,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void registerPatient(UserPatientRequest userPatientRequest) {
         UserPatientRequest user = userService.createPatient(userPatientRequest);
-        RegistrationMessage message = new RegistrationMessage();
+        EmailMessage message = new EmailMessage();
         message.setEmail(user.getUser().getEmail());
         message.setVerificationToken(user.getUser().getVerificationToken());
         emailService.sendRegistrationMessage(message);

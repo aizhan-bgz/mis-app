@@ -1,8 +1,9 @@
 package itacademy.misbackend.service;
 
-import itacademy.misbackend.dto.RegistrationMessage;
+import itacademy.misbackend.dto.EmailMessage;
 
 public interface EmailService {
-    void sendRegistrationMessage(RegistrationMessage message);
+    void sendRegistrationMessage(EmailMessage message);
+    void sendPasswordResetMessage(EmailMessage message);
 
 }

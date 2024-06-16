@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationMessage {
+public class EmailMessage {
     private String email;
     private String verificationToken;
 }
