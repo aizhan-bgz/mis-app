@@ -30,9 +30,9 @@ public class PatientMapperImpl implements PatientMapper {
         if (patient.getUser() != null) {
             dto.setUserId(patient.getUser().getId());
         }
-     //   if (patient.getAppointments() != null) {
-     //       dto.setAppointments(new AppointmentMapperImpl().toDtoList(patient.getAppointments()));
-     //   }
+        if (patient.getAppointments() != null) {
+            dto.setAppointments(new AppointmentMapperImpl().toDtoList(patient.getAppointments()));
+        }
         return dto;
     }
 
