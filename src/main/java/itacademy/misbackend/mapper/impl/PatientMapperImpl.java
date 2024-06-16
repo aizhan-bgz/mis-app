@@ -38,7 +38,7 @@ public class PatientMapperImpl implements PatientMapper {
 
     @Override
     public Patient toEntity(PatientDto patientDto) {
-        Patient patient = Patient.builder()
+        return Patient.builder()
                 .firstName(patientDto.getFirstName())
                 .lastName(patientDto.getLastName())
                 .patronymic(patientDto.getPatronymic())
@@ -50,7 +50,6 @@ public class PatientMapperImpl implements PatientMapper {
                 .passport(patientDto.getPassport())
                 .address(patientDto.getAddress())
                 .build();
-        return patient;
     }
 
     @Override
