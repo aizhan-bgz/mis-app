@@ -52,7 +52,7 @@ public class PatientDto {
 
     private Long userId;
 
- //   private List<AppointmentDto> appointments;
+    private List<AppointmentDto> appointments;
 
     private LocalDate deletedAt;
     private String deletedBy;

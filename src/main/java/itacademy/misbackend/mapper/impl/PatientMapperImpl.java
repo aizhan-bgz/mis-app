@@ -30,15 +30,15 @@ public class PatientMapperImpl implements PatientMapper {
         if (patient.getUser() != null) {
             dto.setUserId(patient.getUser().getId());
         }
-     //   if (patient.getAppointments() != null) {
-     //       dto.setAppointments(new AppointmentMapperImpl().toDtoList(patient.getAppointments()));
-     //   }
+        if (patient.getAppointments() != null) {
+            dto.setAppointments(new AppointmentMapperImpl().toDtoList(patient.getAppointments()));
+        }
         return dto;
     }
 
     @Override
     public Patient toEntity(PatientDto patientDto) {
-        Patient patient = Patient.builder()
+        return Patient.builder()
                 .firstName(patientDto.getFirstName())
                 .lastName(patientDto.getLastName())
                 .patronymic(patientDto.getPatronymic())
@@ -50,7 +50,6 @@ public class PatientMapperImpl implements PatientMapper {
                 .passport(patientDto.getPassport())
                 .address(patientDto.getAddress())
                 .build();
-        return patient;
     }
 
     @Override

@@ -74,13 +74,22 @@ public class DoctorServiceImpl implements DoctorService {
             log.error("Врач с id " + id + " не найден!");
             throw new NotFoundException("Врач не найден!");
         }
+        if (updateDto.getFirstName() != null){
+            doctor.setFirstName(updateDto.getFirstName());
+        }
+        if (updateDto.getLastName() != null){
+            doctor.setLastName(updateDto.getLastName());
+        }
+        if (updateDto.getPatronymic() != null){
+            doctor.setLastName(updateDto.getLastName());
+        }
         if (updateDto.getSpecialization() != null) {
             doctor.setSpecialization(updateDto.getSpecialization());
         }
         if (updateDto.getDepartmentId() != null) {
             Department department = departmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(updateDto.getDepartmentId());
             if (department == null) {
-                log.error("Врач с id " + id + " не найден!");
+                log.error("Отделение с id " + id + " не найдено!");
                 throw new NotFoundException("Отделение с id " + updateDto.getDepartmentId() + " не найдено");
             }
             doctor.setDepartment(department);
