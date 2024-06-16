@@ -60,7 +60,7 @@ public class RoleController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }

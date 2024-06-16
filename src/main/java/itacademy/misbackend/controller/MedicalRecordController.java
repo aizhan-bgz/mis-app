@@ -24,7 +24,6 @@ import java.util.List;
 public class MedicalRecordController {
     private final MedicalRecordService service;
 
-//Обработка ошибок
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -57,7 +56,7 @@ public class MedicalRecordController {
                     ResultCodeAPI.EXCEPTION,
                     e.getClass().getSimpleName(),
                     "Ошибка сервера",
-                    ResultCode.FAIL);
+                    ResultCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -96,7 +95,7 @@ public class MedicalRecordController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL);
+                    ResultCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -138,7 +137,7 @@ public class MedicalRecordController {
                         ResultCodeAPI.EXCEPTION,
                         e.getClass().getSimpleName(),
                         "Ошибка сервера",
-                        ResultCode.FAIL
+                        ResultCode.INTERNAL_SERVER_ERROR
                 );
             }
     }
@@ -179,7 +178,7 @@ public class MedicalRecordController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL);
+                    ResultCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -219,7 +218,7 @@ public class MedicalRecordController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL);
+                    ResultCode.INTERNAL_SERVER_ERROR);
         }
     }
 
