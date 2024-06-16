@@ -1,4 +1,4 @@
-package itacademy.misbackend.controller;
+package itacademy.misbackend.controller.util;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
