@@ -156,8 +156,8 @@ public class ServiceTypeController {
                     description = "Не удалось обновить услугу.")
     })
     @Operation(summary = "Этот роут выполняет поиск услуги по id и обновляет.")
-    @PutMapping("/update")
-    public CustomResponseMessage<ServiceTypeDto> update(@RequestParam Long id, @RequestBody ServiceTypeDto dto) {
+    @PutMapping("/{id}")
+    public CustomResponseMessage<ServiceTypeDto> update(@PathVariable Long id, @RequestBody ServiceTypeDto dto) {
             try {
                 return new CustomResponseMessage<>(
                         service.update(id, dto),
@@ -197,8 +197,8 @@ public class ServiceTypeController {
                     description = "Не удалось удалить услугу.")
     })
     @Operation(summary = "Этот роут удаляет услугу по id.")
-    @PutMapping("/delete")
-    public CustomResponseMessage<String> delete(@RequestParam Long id) {
+    @DeleteMapping("/{id}")
+    public CustomResponseMessage<String> delete(@PathVariable Long id) {
         try {
             return new CustomResponseMessage<>(
                     service.delete(id),
