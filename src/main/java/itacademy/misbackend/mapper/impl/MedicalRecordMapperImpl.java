@@ -17,7 +17,7 @@ public class MedicalRecordMapperImpl implements MedicalRecordMapper {
         return MedicalRecordDto.builder()
                 .id(record.getId())
                 .appointmentId(record.getAppointment().getId())
-        //        .medCardId(record.getMedCard().getId())
+                .medCardId(record.getMedCard().getId())
                 .diagnosis(record.getDiagnosis())
                 .prescription(record.getPrescription())
                 .notes(record.getNotes())

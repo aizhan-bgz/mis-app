@@ -157,7 +157,7 @@ public class MedicalRecordController {
                     description = "Не удалось обновить мед запись.")
     })
     @Operation(summary = "Этот роут выполняет поиск мед записи по id и обновляет")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public CustomResponseMessage<MedicalRecordDto> update(@PathVariable Long id, @RequestBody MedicalRecordDto recordDto) {
         try {
             return new CustomResponseMessage<>(
@@ -197,7 +197,7 @@ public class MedicalRecordController {
                     description = "Не удалось удалить мед запись.")
     })
     @Operation(summary = "Этот роут удаляет мед запись по id")
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public CustomResponseMessage<String> delete(@PathVariable Long id) {
         try {
             return new CustomResponseMessage<>(
