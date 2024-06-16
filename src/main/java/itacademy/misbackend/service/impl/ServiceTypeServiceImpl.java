@@ -1,6 +1,7 @@
 package itacademy.misbackend.service.impl;
 
 import itacademy.misbackend.dto.ServiceTypeDto;
+import itacademy.misbackend.entity.Department;
 import itacademy.misbackend.entity.ServiceType;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.repo.DepartmentRepo;
@@ -90,12 +91,24 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
             throw new NotFoundException("Услуга не найдена!");
         }
         log.info("Услуга найдена. Исходные данные - {}", serviceType);
-        serviceType.setName(updateDto.getName());
-        serviceType.setDescription(updateDto.getDescription());
-        serviceType.setPrice(updateDto.getPrice());
-        serviceType.setDepartment(departmentRepo
-                .findByDeletedAtIsNullAndDeletedByIsNullAndId(updateDto.getDepartmentId() ) );
-
+        if (updateDto.getName() != null) {
+            serviceType.setName(updateDto.getName());
+        }
+        if (updateDto.getDescription() != null) {
+            serviceType.setDescription(updateDto.getDescription());
+        }
+        if (updateDto.getPrice() != null) {
+            serviceType.setPrice(updateDto.getPrice());
+        }
+        if (updateDto.getDepartmentId() != null) {
+            Department department = departmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(updateDto.getDepartmentId());
+            if (department == null) {
+                log.error("Отделение с id " + id + " не найдено!");
+                throw new NotFoundException("Отделение с id " + updateDto.getDepartmentId() + " не найдено");
+            }
+            serviceType.setDepartment(departmentRepo
+                    .findByDeletedAtIsNullAndDeletedByIsNullAndId(updateDto.getDepartmentId()));
+        }
         serviceType = repo.save(serviceType);
         log.info("КОНЕЦ: ServiceTypeServiceImpl - update(). Обновленная услуга - {}", serviceType);
         return  ServiceTypeDto.builder()

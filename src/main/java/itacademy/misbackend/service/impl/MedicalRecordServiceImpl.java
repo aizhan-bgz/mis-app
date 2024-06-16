@@ -100,11 +100,18 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             throw new NotFoundException("Медицинская запись не найдена!");
         }
         log.info("Запись найдена. Исходные данные - {}", record);
-
-        record.setDiagnosis(updateDto.getDiagnosis());
-        record.setPrescription(updateDto.getPrescription());
-        record.setNotes(updateDto.getNotes());
-        record.setRecommendation(updateDto.getRecommendation());
+        if (updateDto.getDiagnosis() != null) {
+            record.setDiagnosis(updateDto.getDiagnosis());
+        }
+        if (updateDto.getPrescription() != null) {
+            record.setPrescription(updateDto.getPrescription());
+        }
+        if (updateDto.getNotes() != null) {
+            record.setNotes(updateDto.getNotes());
+        }
+        if (updateDto.getRecommendation() != null) {
+            record.setRecommendation(updateDto.getRecommendation());
+        }
         record.setLastUpdatedAt(LocalDateTime.now());
         record.setLastUpdatedBy(authentication.getName());
         repo.save(record);
