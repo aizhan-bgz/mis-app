@@ -54,7 +54,7 @@ public class AppointmentController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -92,7 +92,7 @@ public class AppointmentController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -132,7 +132,7 @@ public class AppointmentController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -172,7 +172,7 @@ public class AppointmentController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -212,7 +212,7 @@ public class AppointmentController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }

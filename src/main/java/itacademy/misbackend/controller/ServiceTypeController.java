@@ -56,7 +56,7 @@ public class ServiceTypeController {
                     ResultCodeAPI.EXCEPTION,
                     e.getClass().getSimpleName(),
                     "Ошибка сервера",
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -98,7 +98,7 @@ public class ServiceTypeController {
                     ResultCodeAPI.EXCEPTION,
                     e.getClass().getSimpleName(),
                     "Ошибка сервера",
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -139,7 +139,7 @@ public class ServiceTypeController {
                     ResultCodeAPI.EXCEPTION,
                     e.getClass().getSimpleName(),
                     "Ошибка сервера",
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -180,7 +180,7 @@ public class ServiceTypeController {
                         ResultCodeAPI.EXCEPTION,
                         e.getClass().getSimpleName(),
                         "Ошибка сервера",
-                        ResultCode.FAIL
+                        ResultCode.INTERNAL_SERVER_ERROR
                 );
             }
     }
@@ -219,7 +219,7 @@ public class ServiceTypeController {
                     ResultCodeAPI.EXCEPTION,
                     e.getClass().getSimpleName(),
                     "Ошибка сервера",
-                    ResultCode.FAIL);
+                    ResultCode.INTERNAL_SERVER_ERROR);
         }
     }
 

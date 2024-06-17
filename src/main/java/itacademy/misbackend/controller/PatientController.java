@@ -54,7 +54,7 @@ public class PatientController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -94,7 +94,7 @@ public class PatientController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
         }
@@ -134,7 +134,8 @@ public class PatientController {
                     ResultCodeAPI.EXCEPTION,
                     e.getClass().getSimpleName(),
                     "Ошибка сервера",
-                    ResultCode.FAIL);
+                    ResultCode.INTERNAL_SERVER_ERROR
+            );
         }
     }
     @ApiResponses(value = {
@@ -173,7 +174,7 @@ public class PatientController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -213,7 +214,7 @@ public class PatientController {
                     ResultCodeAPI.EXCEPTION,
                     "Ошибка",
                     e.getMessage(),
-                    ResultCode.FAIL
+                    ResultCode.INTERNAL_SERVER_ERROR
             );
         }
     }
