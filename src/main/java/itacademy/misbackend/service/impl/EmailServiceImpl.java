@@ -15,7 +15,7 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender mailSender;
     private final UserService userService;
 
-    public void sendRegistrationMessage(EmailMessage message) throws MailException {
+    /*public void sendRegistrationMessage(EmailMessage message) throws MailException {
         SimpleMailMessage emailMessage = new SimpleMailMessage();
         emailMessage.setFrom("t86501540@gmail.com");
         emailMessage.setTo(message.getEmail());
@@ -24,7 +24,7 @@ public class EmailServiceImpl implements EmailService {
                 + "https://it-academy-mis-app-eb8b8e2f87d7.herokuapp.com/api/register/confirm?token=" + message.getVerificationToken()
                 + "&id=" + userService.getUserIdByEmail(message.getEmail()));
         mailSender.send(emailMessage);
-    }
+    }*/
 
     public void sendPasswordResetMessage(EmailMessage message) throws MailException {
         SimpleMailMessage emailMessage = new SimpleMailMessage();

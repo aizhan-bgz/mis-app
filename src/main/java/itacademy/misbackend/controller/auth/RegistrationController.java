@@ -37,8 +37,8 @@ public class RegistrationController {
        registrationService.registerDoctor(userDoctorRequest);
        return new CustomResponseMessage<>(
                    null,
-                   "Wait for a message to confirm your registration to the email " +
-                           "you provided during registration.",
+               "Successful registration. Here is Verification Token:" +
+                        userDoctorRequest.getUser().getVerificationToken(),
                    HttpStatus.CREATED.value()
        );
     }
@@ -59,8 +59,8 @@ public class RegistrationController {
         registrationService.registerPatient(userPatientRequest);
         return new CustomResponseMessage<>(
                     null,
-                    "Wait for a message to confirm your registration to the email " +
-                            "you provided during registration.",
+                    "Successful registration. Here is Verification Token:" +
+                            userPatientRequest.getUser().getVerificationToken(),
                     HttpStatus.CREATED.value()
         );
     }
