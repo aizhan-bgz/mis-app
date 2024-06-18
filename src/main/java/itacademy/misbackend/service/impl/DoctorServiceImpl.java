@@ -47,8 +47,7 @@ public class DoctorServiceImpl implements DoctorService {
         log.info("СТАРТ: DoctorServiceImpl - getById({})", id);
         Doctor doctor = doctorRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (doctor == null) {
-            log.error("Врач с id " + id + " не найден!");
-            throw new NotFoundException("Врач не найден!");
+            throw new NotFoundException("Врач с id " + id + " не найден!");
         }
         log.info("КОНЕЦ: DoctorServiceImpl - getById(). Врач - {} ", doctor);
         return doctorMapper.toDto(doctor);
@@ -59,8 +58,7 @@ public class DoctorServiceImpl implements DoctorService {
         log.info("СТАРТ: DoctorServiceImpl - getAll()");
         var doctors = doctorRepo.findAllByDeletedAtIsNullAndDeletedByIsNull();
         if (doctors == null) {
-            log.error("Список Врачей пуст!");
-            throw new NotFoundException("Врачей нет!");
+            throw new NotFoundException("Список Врачей пуст!");
         }
         log.info("КОНЕЦ: DoctorServiceImpl - getAll()");
         return doctorMapper.toDtoList(doctors);
@@ -71,8 +69,7 @@ public class DoctorServiceImpl implements DoctorService {
         log.info("СТАРТ: DoctorServiceImpl - update(). Врач с id {}", id);
         Doctor doctor = doctorRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (doctor == null) {
-            log.error("Врач с id " + id + " не найден!");
-            throw new NotFoundException("Врач не найден!");
+            throw new NotFoundException("Врач с id " + id + " не найден!");
         }
         if (updateDto.getFirstName() != null){
             doctor.setFirstName(updateDto.getFirstName());
@@ -89,7 +86,6 @@ public class DoctorServiceImpl implements DoctorService {
         if (updateDto.getDepartmentId() != null) {
             Department department = departmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(updateDto.getDepartmentId());
             if (department == null) {
-                log.error("Отделение с id " + id + " не найдено!");
                 throw new NotFoundException("Отделение с id " + updateDto.getDepartmentId() + " не найдено");
             }
             doctor.setDepartment(department);
@@ -107,8 +103,7 @@ public class DoctorServiceImpl implements DoctorService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Doctor doctor = doctorRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (doctor == null) {
-            log.error("Врач с id " + id + " не найден!");
-            throw new NotFoundException("Врач не найден!");
+            throw new NotFoundException("Врач с id " + id + " не найден!");
         }
         doctor.setDeletedAt(LocalDateTime.now());
         doctor.setDeletedBy(authentication.getName());

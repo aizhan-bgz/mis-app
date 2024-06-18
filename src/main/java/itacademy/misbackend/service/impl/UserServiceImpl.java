@@ -3,6 +3,7 @@ package itacademy.misbackend.service.impl;
 import itacademy.misbackend.dto.*;
 import itacademy.misbackend.entity.Role;
 import itacademy.misbackend.entity.User;
+import itacademy.misbackend.exception.DuplicateValueException;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.UserMapper;
 import itacademy.misbackend.repo.UserRepo;
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("Пользователь не найден");
+            throw new UsernameNotFoundException("Пользователь с указанным username не найден");
         }
         user.setLastAuthentication(LocalDateTime.now());
         userRepo.save(user);
@@ -54,6 +55,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("СТАРТ: UserServiceImpl - create() {}", saveUserDto);
         saveUserDto.setPassword(passwordEncoder.encode(saveUserDto.getPassword()));
         saveUserDto.setVerificationToken(UUID.randomUUID().toString());
+        if (userRepo.existsByEmail(saveUserDto.getEmail()) && userRepo.existsByUsername(saveUserDto.getUsername())){
+            throw new DuplicateValueException(
+                            "Пользователь с указанным email (" + saveUserDto.getEmail() + ")" +
+                            "и username (" + saveUserDto.getUsername() + ") уже существует."
+            );
+        }
+        if (userRepo.existsByEmail(saveUserDto.getEmail())) {
+            throw new DuplicateValueException(
+                    "Пользователь с указанным email (" + saveUserDto.getEmail() + ") уже существует."
+            );
+        }
+        if (userRepo.existsByUsername(saveUserDto.getUsername())){
+            throw new DuplicateValueException(
+                    "Пользователь с указанным username (" + saveUserDto.getUsername() + ") уже существует."
+            );
+        }
         User user = userMapper.toEntity(saveUserDto);
         var roles = new HashSet<Role>();
         user.setRoles(roles);
@@ -93,7 +110,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("СТАРТ: UserServiceImpl - getById({})", id);
         User user = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (user == null) {
-            log.error("Пользователь с id " + id + " не найден!");
             throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
         log.info("КОНЕЦ: UserServiceImpl - getById(). Пользователь - {} ", userMapper.toDto(user));
@@ -104,8 +120,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<UserDto> getAll() {
         log.info("СТАРТ: UserServiceImpl - getAll()");
         if (userRepo.findAllByDeletedAtIsNullAndDeletedByIsNull().isEmpty()) {
-            log.error("Пользователей нет!");
-            throw new NotFoundException("Пользователи не найдены");
+            throw new NotFoundException("Пользователей нет!");
         }
         log.info("КОНЕЦ: MedicalRecordServiceImpl - getAll()");
         return userMapper.toDtoList(userRepo.findAllByDeletedAtIsNullAndDeletedByIsNull());
@@ -150,7 +165,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
 
         if (user == null) {
-            log.error("Пользователь с id " + id + " не найден!");
             throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
         user.setDeletedAt(LocalDateTime.now());

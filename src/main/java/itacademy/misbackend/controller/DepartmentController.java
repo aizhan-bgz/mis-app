@@ -7,11 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
 import itacademy.misbackend.dto.DepartmentDto;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
-import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,29 +30,18 @@ public class DepartmentController {
                     description = "Не удалось добавить отделение.")
     })
     @Operation(summary = "Этот роут для создания отделений.")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
     public CustomResponseMessage<DepartmentDto> create (@RequestBody DepartmentDto departmentDto) {
-        try {
-            return new CustomResponseMessage<>(
-                    departmentService.create(departmentDto),
-                    ResultCodeAPI.CREATED,
-                    null,
-                    "success",
-                    ResultCode.CREATED);
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.FAIL
-            );
-        }
+        return new CustomResponseMessage<>(
+                departmentService.create(departmentDto),
+                "Отделение успешно создано..",
+                HttpStatus.CREATED.value());
     }
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Список всех доступных отделений.",
+                    description = "Список всех доступных отделений получен.",
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(
                     responseCode = "404",
@@ -66,30 +53,11 @@ public class DepartmentController {
     @Operation(summary = "Этот роут возвращает все доступные отделения.")
     @GetMapping()
     public CustomResponseMessage<List<DepartmentDto>> getAll () {
-        try {
-            return new CustomResponseMessage<>(
-                    departmentService.getAll(),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Список всех доступных отделений получен",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                departmentService.getAll(),
+                "Список всех доступных отделений получен.",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -106,30 +74,11 @@ public class DepartmentController {
     @Operation(summary = "Этот роут для поиска отделений по id.")
     @GetMapping("/{id}")
     public CustomResponseMessage<DepartmentDto> getById (@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
-                    departmentService.getById(id),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Отделение успешно найдено",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                departmentService.getById(id),
+                "Отделение по id успешно найдено.",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -146,30 +95,11 @@ public class DepartmentController {
     @Operation(summary = "Этот роут для поиска отделений по idи ее обновления.")
     @PutMapping("/{id}")
     public CustomResponseMessage<DepartmentDto> update (@PathVariable Long id, @RequestBody DepartmentDto departmentDto) {
-        try {
-            return new CustomResponseMessage<>(
-                    departmentService.update(id, departmentDto),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Отделение успешно обновлено",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                departmentService.update(id, departmentDto),
+                "Отделение по id успешно обновлено.",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -186,29 +116,10 @@ public class DepartmentController {
     @Operation(summary = "Этот роут для удаления отделений по id.")
     @DeleteMapping("/{id}")
     public CustomResponseMessage<String> delete (@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
-                    departmentService.delete(id),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Отделение успешно удалено",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                departmentService.delete(id),
+                null,
+                HttpStatus.OK.value()
+        );
     }
 }

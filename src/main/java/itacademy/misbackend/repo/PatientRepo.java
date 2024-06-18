@@ -10,4 +10,7 @@ import java.util.List;
 public interface PatientRepo extends JpaRepository<Patient, Long> {
     Patient findByDeletedAtIsNullAndDeletedByIsNullAndId(Long id);
     List<Patient> findAllByDeletedAtIsNullAndDeletedByIsNull();
+    Boolean existsByPassport(String passport);
+    Boolean existsByTaxId(String taxId);
+
 }

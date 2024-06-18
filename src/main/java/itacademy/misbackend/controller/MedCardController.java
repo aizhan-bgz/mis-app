@@ -10,11 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
 import itacademy.misbackend.dto.MedCardDto;
 import itacademy.misbackend.dto.MedicalRecordDto;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
-import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.MedCardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,31 +43,11 @@ public class MedCardController {
     @Operation(summary = "Этот роут возвращает все доступные мед карты")
     @GetMapping()
     public CustomResponseMessage<List<MedCardDto>> getAll() {
-        try {
-            return new CustomResponseMessage<>(
-                    service.getAll(),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Все доступные мед карты успешно получены",
-                    ResultCode.OK
-            );
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                service.getAll(),
+                "Все доступные мед карты получены",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -86,30 +64,10 @@ public class MedCardController {
     @Operation(summary = "Этот роут для поиска мед карт по id.")
     @GetMapping("/{id}")
     public CustomResponseMessage<MedCardDto> getById(@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
-                    service.getById(id),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Мед карта по id успешно найдена.",
-                    ResultCode.OK
-            );
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                service.getById(id),
+                "Мед карта по id успешно найдена.",
+                HttpStatus.OK.value()
+        );
     }
 }
