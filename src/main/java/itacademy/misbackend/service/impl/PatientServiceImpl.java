@@ -35,18 +35,17 @@ public class PatientServiceImpl implements PatientService {
         patient.setUser(userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(patientDto.getUserId()));
         if (patientRepo.existsByPassport(patientDto.getPassport()) && patientRepo.existsByTaxId(patientDto.getTaxId())){
             throw new DuplicateValueException(
-                    "Пациент с указанным паспортом (" + patientDto.getPassport() + ")" +
-                            "и ИНН (" + patientDto.getTaxId() + ") уже существует"
+                    "Пациент с указанным паспортом и ИНН уже существует"
             );
         }
         if(patientRepo.existsByPassport(patientDto.getPassport())){
             throw new DuplicateValueException(
-                    "Пациент с указанным паспортом (" + patientDto.getPassport() + ") уже существует"
+                    "Пациент с указанным паспортом уже существует"
             );
         }
         if (patientRepo.existsByTaxId(patientDto.getTaxId())){
             throw new DuplicateValueException(
-                    "Пациент с указанным ИНН (" + patientDto.getTaxId() + ") уже существует"
+                    "Пациент с указанным ИНН уже существует"
             );
         }
         patient = patientRepo.save(patient);
