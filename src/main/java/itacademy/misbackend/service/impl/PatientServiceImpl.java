@@ -33,7 +33,22 @@ public class PatientServiceImpl implements PatientService {
         log.info("СТАРТ: PatientServiceImpl - create() {}", patientDto);
         Patient patient = patientMapper.toEntity(patientDto);
         patient.setUser(userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(patientDto.getUserId()));
-
+        if (patientRepo.existsByPassport(patientDto.getPassport()) && patientRepo.existsByTaxId(patientDto.getTaxId())){
+            throw new DuplicateValueException(
+                    "Пациент с указанным паспортом (" + patientDto.getPassport() + ")" +
+                            "и ИНН (" + patientDto.getTaxId() + ") уже существует"
+            );
+        }
+        if(patientRepo.existsByPassport(patientDto.getPassport())){
+            throw new DuplicateValueException(
+                    "Пациент с указанным паспортом (" + patientDto.getPassport() + ") уже существует"
+            );
+        }
+        if (patientRepo.existsByTaxId(patientDto.getTaxId())){
+            throw new DuplicateValueException(
+                    "Пациент с указанным ИНН (" + patientDto.getTaxId() + ") уже существует"
+            );
+        }
         patient = patientRepo.save(patient);
 
         MedCard medCard = new MedCard();
