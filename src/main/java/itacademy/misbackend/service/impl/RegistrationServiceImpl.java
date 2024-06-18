@@ -25,7 +25,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         EmailMessage message = new EmailMessage();
         message.setEmail(user.getUser().getEmail());
         message.setVerificationToken(user.getUser().getVerificationToken());
-        emailService.sendRegistrationMessage(message);
+//        emailService.sendRegistrationMessage(message);
     }
     @Transactional
     @Override
@@ -34,7 +34,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         EmailMessage message = new EmailMessage();
         message.setEmail(user.getUser().getEmail());
         message.setVerificationToken(user.getUser().getVerificationToken());
-        emailService.sendRegistrationMessage(message);
+//        emailService.sendRegistrationMessage(message);
     }
 
     @Override
