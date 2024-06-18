@@ -37,8 +37,9 @@ public class RegistrationController {
        registrationService.registerDoctor(userDoctorRequest);
        return new CustomResponseMessage<>(
                    null,
-               "Successful registration. Here is Verification Token:" +
-                        userDoctorRequest.getUser().getVerificationToken(),
+               "Successful registration. Here is Verification Token: " +
+                        userDoctorRequest.getUser().getVerificationToken() + " User id: " +
+                        userDoctorRequest.getUser().getId(),
                    HttpStatus.CREATED.value()
        );
     }
@@ -59,8 +60,9 @@ public class RegistrationController {
         registrationService.registerPatient(userPatientRequest);
         return new CustomResponseMessage<>(
                     null,
-                    "Successful registration. Here is Verification Token:" +
-                            userPatientRequest.getUser().getVerificationToken(),
+                    "Successful registration. Here is Verification Token: " +
+                            userPatientRequest.getUser().getVerificationToken() + " User id: " +
+                            userPatientRequest.getUser().getId(),
                     HttpStatus.CREATED.value()
         );
     }
@@ -74,7 +76,8 @@ public class RegistrationController {
                     responseCode = "400",
                     description = "Возникла ошибка при подтверждении регистрации.")
     })
-    @Operation(summary = "Этот роут нужен для подтверждения регистрации пользователя, приходит пользователю по почте.")
+    @Operation(summary = "Этот роут нужен для подтверждения регистрации пользователя, " +
+            "нужно ввести токен подтверждения и id пользователя")
     @GetMapping("/confirm")
     public CustomResponseMessage<Object> confirm(@RequestParam String token, @RequestParam Long id) {
        registrationService.confirm(token, id);
