@@ -37,15 +37,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Doctor doctor = doctorRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(appointmentDto.getDoctorId());
         if (doctor == null) {
-            log.error("Врач не найден");
-            throw new NotFoundException("Врач не найден");
+            throw new NotFoundException("Врач с id " + appointmentDto.getDoctorId() + " не найден");
         }
         appointment.setDoctor(doctor);
 
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(appointmentDto.getPatientId());
         if (patient == null) {
-            log.error("Пациент не найден");
-            throw new NotFoundException("Пациент не найден");
+            throw new NotFoundException("Пациент с id " + appointmentDto.getPatientId() + " не найден");
         }
         appointment.setPatient(patient);
         appointment.setStatus("Запланирован");
@@ -60,8 +58,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         log.info("СТАРТ: AppointmentServiceImpl - getById({})", id);
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (appointment == null) {
-            log.error("Запись приема с id " + id + " не найдена!");
-            throw new NotFoundException("Запись приема не найдена!");
+            throw new NotFoundException("Запись приема с id " + id + " не найдена!");
         }
         log.info("КОНЕЦ: AppointmentServiceImpl - getById(). Прием - {} ", appointment);
         return appointmentMapper.toDto(appointment);
@@ -72,8 +69,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         log.info("СТАРТ: AppointmentServiceImpl - getAll()");
         var list = (appointmentRepo.findAllByDeletedAtIsNullAndDeletedByIsNull());
         if (list == null) {
-            log.error("Список приемов пуст!");
-            throw new NotFoundException("Приемов нет!");
+            throw new NotFoundException("Список приемов пуст!");
         }
         log.info("КОНЕЦ: AppointmentServiceImpl - getAll()");
         return appointmentMapper.toDtoList(list);
@@ -85,7 +81,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
 
         if (appointment == null) {
-            log.error("Запись приема с id " + id + " не найдена!");
             throw new NotFoundException("Запись приема с id " + id + " не найдена!");
         }
         if (appointmentDto.getReason() != null) {
@@ -106,13 +101,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (appointment == null) {
-            log.error("Запись приема с id " + id + " не найдена!");
             throw new NotFoundException("Запись приема с id " + id + " не найдена!");
         }
         appointment.setDeletedAt(LocalDateTime.now());
         appointment.setDeletedBy(authentication.getName());
         appointmentRepo.save(appointment);
         log.info("КОНЕЦ: DoctorServiceImpl - delete(). Запись приема (id {}) удалена", id);
-        return "Запись приема с id " + id + " успешно удалена";
+        return "Запись приема с id " + id + " удалена";
     }
 }

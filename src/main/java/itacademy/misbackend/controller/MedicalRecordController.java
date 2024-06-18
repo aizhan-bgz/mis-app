@@ -9,11 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
 import itacademy.misbackend.dto.MedicalRecordDto;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
-import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.MedicalRecordService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,30 +32,14 @@ public class MedicalRecordController {
                     description = "Не удалось добавить мед запись.")
     })
     @Operation(summary = "Этот роут для создание мед записей.")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CustomResponseMessage<MedicalRecordDto> create(@RequestBody MedicalRecordDto recordDto) {
-        try {
-            return new CustomResponseMessage<>(
+        return new CustomResponseMessage<>(
                     service.create(recordDto),
-                    ResultCodeAPI.CREATED,
-                    null,
-                    "success",
-                    ResultCode.CREATED);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND);
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    e.getClass().getSimpleName(),
-                    "Ошибка сервера",
-                    ResultCode.INTERNAL_SERVER_ERROR);
-        }
+                    "Мед запись успешно создана.",
+                    HttpStatus.CREATED.value()
+        );
     }
 
     @ApiResponses(value = {
@@ -75,28 +57,11 @@ public class MedicalRecordController {
     @Operation(summary = "Этот роут для поиска мед записей по id.")
     @GetMapping("/{id}")
     public CustomResponseMessage<MedicalRecordDto> getById(@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
+        return new CustomResponseMessage<>(
                     service.getById(id),
-                    ResultCodeAPI.CREATED,
-                    null,
-                    "success",
-                    ResultCode.CREATED);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND);
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR);
-        }
+                    "Мед запись по id успешно найден.",
+                    HttpStatus.OK.value()
+        );
     }
 
     @ApiResponses(value = {
@@ -115,31 +80,11 @@ public class MedicalRecordController {
     @Operation(summary = "Этот роут возвращает все доступные мед записи")
     @GetMapping()
     public CustomResponseMessage<List<MedicalRecordDto>> getAll() {
-            try {
-                return new CustomResponseMessage<>(
-                        service.getAll(),
-                        ResultCodeAPI.SUCCESS,
-                        null,
-                        "Все доступные мед записи успешно получены",
-                        ResultCode.OK
-                );
-            } catch (NotFoundException exception) {
-                return new CustomResponseMessage<>(
-                        null,
-                        ResultCodeAPI.FAIL,
-                        exception.getClass().getSimpleName(),
-                        exception.getMessage(),
-                        ResultCode.NOT_FOUND
-                );
-            } catch (Exception e) {
-                return new CustomResponseMessage<>(
-                        null,
-                        ResultCodeAPI.EXCEPTION,
-                        e.getClass().getSimpleName(),
-                        "Ошибка сервера",
-                        ResultCode.INTERNAL_SERVER_ERROR
-                );
-            }
+      return new CustomResponseMessage<>(
+              service.getAll(),
+              "Все доступные мед записи получены",
+              HttpStatus.OK.value()
+      );
     }
 
     @ApiResponses(value = {
@@ -158,28 +103,11 @@ public class MedicalRecordController {
     @Operation(summary = "Этот роут выполняет поиск мед записи по id и обновляет")
     @PutMapping("/{id}")
     public CustomResponseMessage<MedicalRecordDto> update(@PathVariable Long id, @RequestBody MedicalRecordDto recordDto) {
-        try {
-            return new CustomResponseMessage<>(
-                    service.update(id, recordDto),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "success",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND);
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR);
-        }
+        return new CustomResponseMessage<>(
+                service.update(id, recordDto),
+                "Мед запись успешно обновлена",
+                HttpStatus.OK.value()
+        );
     }
 
     @ApiResponses(value = {
@@ -198,28 +126,11 @@ public class MedicalRecordController {
     @Operation(summary = "Этот роут удаляет мед запись по id")
     @DeleteMapping("/{id}")
     public CustomResponseMessage<String> delete(@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
-                    service.delete(id),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "success",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND);
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR);
-        }
+        return new CustomResponseMessage<>(
+                service.delete(id),
+                null,
+                HttpStatus.OK.value()
+        );
     }
 
 }

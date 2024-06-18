@@ -7,11 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.AppointmentDto;
 import itacademy.misbackend.dto.CustomResponseMessage;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
-import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,32 +29,14 @@ public class AppointmentController {
                     description = "Не удалось добавить запись приема.")
     })
     @Operation(summary = "Этот роут для создания записей приема.")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
     public CustomResponseMessage<AppointmentDto> create (@RequestBody AppointmentDto appointmentDto) {
-        try {
-            return new CustomResponseMessage<>(
+        return new CustomResponseMessage<>(
                     appointmentService.create(appointmentDto),
-                    ResultCodeAPI.CREATED,
-                    null,
-                    "success",
-                    ResultCode.CREATED);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+                    "Прием успешно создан.",
+                    HttpStatus.CREATED.value()
+        );
     }
 
     @ApiResponses(value = {
@@ -71,30 +51,11 @@ public class AppointmentController {
     @Operation(summary = "Этот роут возвращает все доступные записи приемов.")
     @GetMapping()
     public CustomResponseMessage<List<AppointmentDto>> getAll () {
-        try {
-            return new CustomResponseMessage<>(
+        return new CustomResponseMessage<>(
                     appointmentService.getAll(),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Список всех доступных приемов получен",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+                    "Список всех доступных приемов получен.",
+                    HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -111,30 +72,11 @@ public class AppointmentController {
     @Operation(summary = "Этот роут для поиска приема по id.")
     @GetMapping("/{id}")
     public CustomResponseMessage<AppointmentDto> getById (@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
+        return new CustomResponseMessage<>(
                     appointmentService.getById(id),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Запись приема успешно найден",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+                    "Запись приема по id успешно найдена.",
+                    HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -151,30 +93,12 @@ public class AppointmentController {
     @Operation(summary = "Этот роут для обновления приема по id.")
     @PutMapping("/{id}")
     public CustomResponseMessage<AppointmentDto> update (@PathVariable Long id, @RequestBody AppointmentDto appointmentDto) {
-        try {
-            return new CustomResponseMessage<>(
+        return new CustomResponseMessage<>(
                     appointmentService.update(id, appointmentDto),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "Запись приема успешно обновлена",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+                    "Запись приема успешно обновлена.",
+                    HttpStatus.OK.value()
+        );
+
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -191,29 +115,10 @@ public class AppointmentController {
     @Operation(summary = "Этот роут для удаления приема по id.")
     @DeleteMapping("/{id}")
     public CustomResponseMessage<String> delete (@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
+        return new CustomResponseMessage<>(
                     appointmentService.delete(id),
-                    ResultCodeAPI.SUCCESS,
                     null,
-                    "Запись приема успешно удалена",
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+                    HttpStatus.OK.value()
+        );
     }
 }

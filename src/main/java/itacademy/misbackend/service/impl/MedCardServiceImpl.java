@@ -25,8 +25,7 @@ public class MedCardServiceImpl implements MedCardService {
         log.info("СТАРТ: MedCardServiceImpl - getById(). Мед карта с id {}", id);
         MedCard medCard = repo.findByDeletedAtIsNullAndId(id);
         if (medCard == null) {
-            log.error("Мед карта с id " + id + " не найдена!");
-            throw new NotFoundException("Мед карта не найдена!");
+            throw new NotFoundException("Мед карта с id " + id + " не найдена!");
         }
          MedCardDto medCardDto = MedCardDto.builder()
                  .id(medCard.getId())
@@ -42,7 +41,6 @@ public class MedCardServiceImpl implements MedCardService {
         log.info("СТАРТ: MedCardServiceImpl - getAll()");
         List<MedCard> medCardList = repo.findAllByDeletedAtIsNull();
         if (medCardList.isEmpty()) {
-            log.error("Мед карт нет!");
             throw new NotFoundException("Мед карт нет!");
         }
         List<MedCardDto> medCardDtoList = new ArrayList<>();

@@ -6,11 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.PasswordResetService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Восстановление пароля", description = "Тут находятся роуты связанные с восстановлением пароля")
@@ -34,31 +33,12 @@ public class PasswordResetController {
             "нужно ввести эл почту.")
     @PostMapping("/forgot")
     public CustomResponseMessage<Void> forgotPassword(@RequestParam String email) {
-       try {
-           passwordResetService.initiatePasswordReset(email);
-           return new CustomResponseMessage<>(
+       passwordResetService.initiatePasswordReset(email);
+       return new CustomResponseMessage<>(
                    null,
-                   ResultCodeAPI.SUCCESS,
-                   "Ожидайте сообщение для сброса пароля на почту, которую вы указали",
-                   null,
-                   ResultCode.OK);
-       } catch (NotFoundException e) {
-           return new CustomResponseMessage<>(
-                   null,
-                   ResultCodeAPI.FAIL,
-                   "Ошибка",
-                   e.getMessage(),
-                   ResultCode.NOT_FOUND
-           );
-       } catch (Exception e) {
-           return new CustomResponseMessage<>(
-                   null,
-                   ResultCodeAPI.EXCEPTION,
-                   "Ошибка на стороне сервера",
-                   e.getMessage(),
-                   ResultCode.INTERNAL_SERVER_ERROR
-           );
-       }
+                   "Wait for a password reset message to the email you provided.",
+                   HttpStatus.OK.value()
+       );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -74,23 +54,13 @@ public class PasswordResetController {
             "на странице он должен ввести новый пароль.")
     @PostMapping("/reset")
     public CustomResponseMessage<Void> resetPassword(@RequestParam String token, @RequestParam Long id, @RequestParam String newPassword) {
-        try {
-            passwordResetService.resetPassword(token, id, newPassword);
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.SUCCESS,
-                    "Пароль успешно изменен",
-                    null,
-                    ResultCode.OK);
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка на стороне сервера",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+
+        passwordResetService.resetPassword(token, id, newPassword);
+        return new CustomResponseMessage<>(
+                null,
+                "Password changed successfully",
+                HttpStatus.OK.value()
+        );
     }
 
 }

@@ -8,12 +8,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
 import itacademy.misbackend.dto.UserDoctorRequest;
 import itacademy.misbackend.dto.UserPatientRequest;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.RegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Registration", description = "Тут находятся все роуты связанные с пациентами")
@@ -32,33 +31,16 @@ public class RegistrationController {
                     description = "Регистрация пользователя не удалась.")
     })
     @Operation(summary = "Этот роут для регистрации пользователей-врачей.")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/doctor")
-    public CustomResponseMessage<Void> registerDoctor(@Valid @RequestBody UserDoctorRequest userDoctorRequest) {
-       try{
-           registrationService.registerDoctor(userDoctorRequest);
-           return new CustomResponseMessage(
+    public CustomResponseMessage<Object> registerDoctor(@Valid @RequestBody UserDoctorRequest userDoctorRequest) {
+       registrationService.registerDoctor(userDoctorRequest);
+       return new CustomResponseMessage<>(
                    null,
-                   ResultCodeAPI.CREATED,
-                   "Ожидайте сообщение для подтверждения регистрации на почту, которую вы указали при регистрации",
-                   null,
-                   ResultCode.CREATED);
-       } catch (NotFoundException e) {
-           return new CustomResponseMessage(
-                   null,
-                   ResultCodeAPI.FAIL,
-                   "Ошибка",
-                   e.getMessage(),
-                   ResultCode.NOT_FOUND
-           );
-       } catch (Exception e) {
-           return new CustomResponseMessage(
-                   null,
-                   ResultCodeAPI.EXCEPTION,
-                   "Ошибка на стороне сервера",
-                   e.getMessage(),
-                   ResultCode.INTERNAL_SERVER_ERROR
-           );
-       }
+                   "Wait for a message to confirm your registration to the email " +
+                           "you provided during registration.",
+                   HttpStatus.CREATED.value()
+       );
     }
 
     @ApiResponses(value = {
@@ -71,33 +53,16 @@ public class RegistrationController {
                     description = "Регистрация пользователя не удалась.")
     })
     @Operation(summary = "Этот роут регистрации пользователей-пациентов.")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/patient")
-    public CustomResponseMessage<Void> registerPatient(@Valid @RequestBody UserPatientRequest userPatientRequest) {
-        try{
-            registrationService.registerPatient(userPatientRequest);
-            return new CustomResponseMessage(
+    public CustomResponseMessage<Object> registerPatient(@Valid @RequestBody UserPatientRequest userPatientRequest) {
+        registrationService.registerPatient(userPatientRequest);
+        return new CustomResponseMessage<>(
                     null,
-                    ResultCodeAPI.CREATED,
-                    "Ожидайте сообщение для подтверждения регистрации на почту, которую вы указали при регистрации",
-                    null,
-                    ResultCode.CREATED);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка на стороне сервера",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+                    "Wait for a message to confirm your registration to the email " +
+                            "you provided during registration.",
+                    HttpStatus.CREATED.value()
+        );
     }
 
     @ApiResponses(value = {
@@ -111,31 +76,12 @@ public class RegistrationController {
     })
     @Operation(summary = "Этот роут нужен для подтверждения регистрации пользователя, приходит пользователю по почте.")
     @GetMapping("/confirm")
-    public CustomResponseMessage<Void> confirm(@RequestParam String token, @RequestParam Long id) {
-        try{
-            registrationService.confirm(token, id);
-            return new CustomResponseMessage(
-                    null,
-                    ResultCodeAPI.SUCCESS,
-                    "Регистрация успешно подтверждена",
-                    null,
-                    ResultCode.OK);
-        } catch (NotFoundException e) {
-            return new CustomResponseMessage(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    "Ошибка",
-                    e.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    "Ошибка на стороне сервера",
-                    e.getMessage(),
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+    public CustomResponseMessage<Object> confirm(@RequestParam String token, @RequestParam Long id) {
+       registrationService.confirm(token, id);
+       return new CustomResponseMessage<>(
+               null,
+               "Registration successfully confirmed",
+               HttpStatus.OK.value()
+       );
     }
 }

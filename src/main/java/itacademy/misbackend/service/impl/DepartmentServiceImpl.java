@@ -37,8 +37,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("СТАРТ: DepartmentServiceImpl - getById({})", id);
         Department department = repo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (department == null) {
-            log.error("Отделение с id " + id + " не найдено!");
-            throw new NotFoundException("Отделение не найдено!");
+            throw new NotFoundException("Отделение с id " + id + " не найдено!");
         }
         log.info("КОНЕЦ: DepartmentServiceImpl - getById(). Отделение - {} ", department);
         return mapper.toDto(department);
@@ -49,7 +48,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("СТАРТ: DepartmentServiceImpl - getAll()");
         var departments = repo.findAllByDeletedAtIsNullAndDeletedByIsNull();
         if (departments.isEmpty()) {
-            log.error("Отделений нет!");
             throw new NotFoundException("Список отделений пуст");
         }
         log.info("КОНЕЦ: DepartmentServiceImpl - getAll()");
@@ -61,8 +59,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("СТАРТ: DepartmentServiceImpl - update(). Отделение с id {}", id);
         Department department = repo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (department == null) {
-            log.error("Отделение с id " + id + " не найдено!");
-            throw new NotFoundException("Отделение не найдено!");
+            throw new NotFoundException("Отделение с id " + id + " не найдено!");
         }
         if (updateDto.getName() != null){
             department.setName(updateDto.getName());
@@ -82,8 +79,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Department department = repo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (department == null) {
-            log.error("Отделение с id " + id + " не найдено!");
-            throw new NotFoundException("Отделение не найдено!");
+            throw new NotFoundException("Отделение с id " + id + " не найдено!");
         }
         department.setDeletedAt(LocalDateTime.now());
         department.setDeletedBy(authentication.getName());

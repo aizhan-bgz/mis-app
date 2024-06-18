@@ -63,7 +63,6 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
         log.info("СТАРТ: ServiceTypeServiceImpl - getAll()");
         List<ServiceType> services = repo.findAllByDeletedAtIsNull();
         if (services.isEmpty()) {
-            log.error("Услуг нет!");
             throw new NotFoundException("Список услуг пуст!");
         }
         var dtoList = new ArrayList<ServiceTypeDto>();
@@ -87,8 +86,7 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
         ServiceType serviceType = repo.findByDeletedAtIsNullAndId(id);
 
         if (serviceType == null) {
-            log.error("Услуга с id " + id + " не найдена!");
-            throw new NotFoundException("Услуга не найдена!");
+            throw new NotFoundException("Услуга с id " + id + " не найдена!");
         }
         log.info("Услуга найдена. Исходные данные - {}", serviceType);
         if (updateDto.getName() != null) {
@@ -125,8 +123,7 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
         log.info("СТАРТ: ServiceTypeServiceImpl - delete(). Услуга с id {}", id);
         ServiceType serviceType = repo.findByDeletedAtIsNullAndId(id);
         if (serviceType == null) {
-            log.error("Услуга с id " + id + " не найдена!");
-            throw new NotFoundException("Услуга не найдена!");
+            throw new NotFoundException("Услуга с id " + id + " не найдена!");
         }
         serviceType.setDeletedAt(LocalDateTime.now());
         repo.save(serviceType);

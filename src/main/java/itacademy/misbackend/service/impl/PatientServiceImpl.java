@@ -3,6 +3,7 @@ package itacademy.misbackend.service.impl;
 import itacademy.misbackend.dto.PatientDto;
 import itacademy.misbackend.entity.MedCard;
 import itacademy.misbackend.entity.Patient;
+import itacademy.misbackend.exception.DuplicateValueException;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.PatientMapper;
 import itacademy.misbackend.repo.MedCardRepo;
@@ -32,6 +33,7 @@ public class PatientServiceImpl implements PatientService {
         log.info("СТАРТ: PatientServiceImpl - create() {}", patientDto);
         Patient patient = patientMapper.toEntity(patientDto);
         patient.setUser(userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(patientDto.getUserId()));
+
         patient = patientRepo.save(patient);
 
         MedCard medCard = new MedCard();
@@ -49,8 +51,7 @@ public class PatientServiceImpl implements PatientService {
         log.info("СТАРТ: PatientServiceImpl - getById({})", id);
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (patient == null) {
-            log.error("Пациент с id " + id + " не найден!");
-            throw new NotFoundException("Пациент не найден!");
+            throw new NotFoundException("Пациент с id " + id + " не найден");
         }
         log.info("КОНЕЦ: PatientServiceImpl - getById(). Пациент - {} ", patient);
         return patientMapper.toDto(patient);
@@ -61,8 +62,7 @@ public class PatientServiceImpl implements PatientService {
         log.info("СТАРТ: PatientServiceImpl - getAll()");
         var patientList = patientRepo.findAllByDeletedAtIsNullAndDeletedByIsNull();
         if (patientList.isEmpty()) {
-            log.error("Пациентов нет!");
-            throw new NotFoundException("Пациентов нет!");
+            throw new NotFoundException("Список пациентов пуст");
         }
         log.info("КОНЕЦ: PatientServiceImpl - getAll()");
         return patientMapper.toDtoList(patientList);
@@ -73,7 +73,6 @@ public class PatientServiceImpl implements PatientService {
         log.info("СТАРТ: PatientServiceImpl - update(). Пациент с id {}", id);
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (patient == null) {
-            log.error("Пациент с id " + id + " не найден!");
             throw new NotFoundException("Пациент с id " + id + " не найден");
         }
         if (patientDto.getDateOfBirth() != null){
@@ -82,11 +81,19 @@ public class PatientServiceImpl implements PatientService {
         if (patientDto.getSex() != null){
             patient.setSex(patientDto.getSex());
         }
-        if (patientDto.getPassport() != null){
+        if (patientDto.getPassport() != null && !patientRepo.existsByPassport(patientDto.getPassport())){
             patient.setPassport(patientDto.getPassport());
+        } else {
+            throw new DuplicateValueException(
+                    "Пациент с указанным паспортом (" + patientDto.getPassport() + ") уже существует"
+            );
         }
-        if (patientDto.getTaxId() != null){
+        if (patientDto.getTaxId() != null && !patientRepo.existsByTaxId(patientDto.getTaxId())){
             patient.setTaxId(patientDto.getTaxId());
+        } else {
+            throw new DuplicateValueException(
+                    "Пациент с указанным ИНН (" + patientDto.getTaxId() + ") уже существует"
+            );
         }
         if (patientDto.getAddress() != null){
             patient.setAddress(patientDto.getAddress());
@@ -105,7 +112,6 @@ public class PatientServiceImpl implements PatientService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (patient == null) {
-            log.error("Пациент с id " + id + " не найден!");
             throw new NotFoundException("Пациент с id " + id + " не найден");
         }
         MedCard medCard = medCardRepo.findByDeletedAtIsNullAndId(id);

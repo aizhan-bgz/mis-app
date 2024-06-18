@@ -39,8 +39,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = mapper.toEntity(recordDto);
         Appointment appointment = appointmentRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(recordDto.getAppointmentId());
         if (appointment == null) {
-            log.error("Прием не найден");
-            throw new NotFoundException("Прием не найден");
+            throw new NotFoundException("Прием с id" + recordDto.getAppointmentId() + " не найден");
         }
         record.setAppointment(appointment);
         appointment.setStatus("Выполнен");
@@ -48,7 +47,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedCard medCard = medCardRepo.findByDeletedAtIsNullAndId(
                 record.getAppointment().getPatient().getId());
         if (medCard == null) {
-            log.error("Медкарта не найдена");
             throw new NotFoundException("Медкарта не найдена");
         }
         record.setMedCard(medCard);
@@ -69,8 +67,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         log.info("СТАРТ: MedicalRecordServiceImpl - getById({})", id);
         MedicalRecord record = repo.findByDeletedAtIsNullAndId(id);
         if (record == null) {
-            log.error("Медицинская запись с id " + id + " не найдена!");
-            throw new NotFoundException("Медицинская запись не найдена!");
+            throw new NotFoundException("Медицинская запись с id " + id + " не найдена!");
         }
         log.info("КОНЕЦ: MedicalRecordServiceImpl - getById(). Медицинская запись - {} ", record);
         return  mapper.toDto(record);
@@ -81,7 +78,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         log.info("СТАРТ: MedicalRecordServiceImpl - getAll()");
         List<MedicalRecord> records = repo.findAllByDeletedAtIsNull();
         if (records.isEmpty()) {
-            log.error("Записей нет!");
             throw new NotFoundException("Записей нет!");
         }
         log.info("КОНЕЦ: MedicalRecordServiceImpl - getAll()");
@@ -96,8 +92,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
         MedicalRecord record = repo.findByDeletedAtIsNullAndId(id);
         if (record == null) {
-            log.error("Медицинская запись с id " + id + " не найдена!");
-            throw new NotFoundException("Медицинская запись не найдена!");
+            throw new NotFoundException("Медицинская запись с id " + id + " не найдена!");
         }
         log.info("Запись найдена. Исходные данные - {}", record);
         if (updateDto.getDiagnosis() != null) {
@@ -125,8 +120,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
         MedicalRecord record = repo.findByDeletedAtIsNullAndId(id);
         if (record == null) {
-            log.error("Медицинская запись с id " + id + " не найдена!");
-            throw new NotFoundException("Медицинская запись не найдена!");
+            throw new NotFoundException("Медицинская запись с id " + id + " не найдена!");
         }
         record.setDeletedAt(LocalDateTime.now());
         record.setDeletedBy(authentication.getName());

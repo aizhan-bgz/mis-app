@@ -7,11 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
 import itacademy.misbackend.dto.ServiceTypeDto;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.ServiceTypeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,33 +31,14 @@ public class ServiceTypeController {
                     description = "Не удалось добавить услугу.")
     })
     @Operation(summary = "Этот роут для создания услуг.")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CustomResponseMessage<ServiceTypeDto> create(@RequestBody ServiceTypeDto dto) {
-        try {
-            return new CustomResponseMessage<>(
-                    service.create(dto),
-                    ResultCodeAPI.CREATED,
-                    null,
-                    "success",
-                    ResultCode.CREATED
-            );
-        }catch (NotFoundException exception) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    exception.getClass().getSimpleName(),
-                    exception.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    e.getClass().getSimpleName(),
-                    "Ошибка сервера",
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                service.create(dto),
+                "Услуга успешно создана.",
+                HttpStatus.CREATED.value()
+        );
     }
 
     @ApiResponses(value = {
@@ -76,31 +56,11 @@ public class ServiceTypeController {
     @Operation(summary = "Этот роут возвращает все доступные услуги.")
     @GetMapping()
     public CustomResponseMessage<List<ServiceTypeDto>> getAll() {
-        try {
-            return new CustomResponseMessage<>(
-                    service.getAll(),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "success",
-                    ResultCode.OK
-            );
-        } catch (NotFoundException exception) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    exception.getClass().getSimpleName(),
-                    exception.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    e.getClass().getSimpleName(),
-                    "Ошибка сервера",
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                service.getAll(),
+                "Все доступные услуги успешно получены.",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -117,31 +77,11 @@ public class ServiceTypeController {
     @Operation(summary = "Этот роут для поиска услуг по id.")
     @GetMapping("/{id}")
     public CustomResponseMessage<ServiceTypeDto> getById(@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
-                    service.getById(id),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "success",
-                    ResultCode.OK
-            );
-        } catch (NotFoundException exception) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    exception.getClass().getSimpleName(),
-                    exception.getMessage(),
-                    ResultCode.NOT_FOUND
-            );
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    e.getClass().getSimpleName(),
-                    "Ошибка сервера",
-                    ResultCode.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new CustomResponseMessage<>(
+                service.getById(id),
+                "Услуга по указанному id найдена.",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -158,31 +98,11 @@ public class ServiceTypeController {
     @Operation(summary = "Этот роут выполняет поиск услуги по id и обновляет.")
     @PutMapping("/{id}")
     public CustomResponseMessage<ServiceTypeDto> update(@PathVariable Long id, @RequestBody ServiceTypeDto dto) {
-            try {
-                return new CustomResponseMessage<>(
-                        service.update(id, dto),
-                        ResultCodeAPI.SUCCESS,
-                        null,
-                        "success",
-                        ResultCode.OK
-                );
-            } catch (NotFoundException exception) {
-                return new CustomResponseMessage<>(
-                        null,
-                        ResultCodeAPI.FAIL,
-                        exception.getClass().getSimpleName(),
-                        exception.getMessage(),
-                        ResultCode.NOT_FOUND
-                );
-            } catch (Exception e) {
-                return new CustomResponseMessage<>(
-                        null,
-                        ResultCodeAPI.EXCEPTION,
-                        e.getClass().getSimpleName(),
-                        "Ошибка сервера",
-                        ResultCode.INTERNAL_SERVER_ERROR
-                );
-            }
+      return new CustomResponseMessage<>(
+              service.update(id, dto),
+              "Услуга успешно обновлена",
+              HttpStatus.OK.value()
+      );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -199,28 +119,11 @@ public class ServiceTypeController {
     @Operation(summary = "Этот роут удаляет услугу по id.")
     @DeleteMapping("/{id}")
     public CustomResponseMessage<String> delete(@PathVariable Long id) {
-        try {
-            return new CustomResponseMessage<>(
-                    service.delete(id),
-                    ResultCodeAPI.SUCCESS,
-                    null,
-                    "success",
-                    ResultCode.OK);
-        } catch (NotFoundException exception) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.FAIL,
-                    exception.getClass().getSimpleName(),
-                    exception.getMessage(),
-                    ResultCode.NOT_FOUND);
-        } catch (Exception e) {
-            return new CustomResponseMessage<>(
-                    null,
-                    ResultCodeAPI.EXCEPTION,
-                    e.getClass().getSimpleName(),
-                    "Ошибка сервера",
-                    ResultCode.INTERNAL_SERVER_ERROR);
-        }
+        return new CustomResponseMessage<>(
+                service.delete(id),
+                null,
+                HttpStatus.OK.value()
+        );
     }
 
 }

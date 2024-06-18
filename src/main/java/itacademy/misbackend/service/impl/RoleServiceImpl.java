@@ -1,6 +1,7 @@
 package itacademy.misbackend.service.impl;
 
 import itacademy.misbackend.entity.Role;
+import itacademy.misbackend.exception.DuplicateValueException;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.repo.RoleRepo;
 import itacademy.misbackend.service.RoleService;
@@ -22,11 +23,7 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     @Override
     public Long save(Role role) {
-        if (role.getName().isEmpty() || role.getName().isBlank() || role.getName() == null) {
-            throw new PropertyValueException("Role", "name", " Наименование роли не может быть пустым");
-        }
         if (roleRepo.existsByName(role.getName())) {
-            log.error("Роль с таким названием уже существует");
             throw new DuplicateKeyException("Роль с таким названием уже существует");
         }
         role.setName(role.getName().toUpperCase());
@@ -67,13 +64,9 @@ public class RoleServiceImpl implements RoleService {
     public Role update(Long id, Role role) {
         Optional<Role> optionalRole = roleRepo.findById(id);
         if (optionalRole.isPresent()) {
-            if (role.getName().isEmpty()){
-                throw new PropertyValueException("Наименование роли не может быть пустым", "Role", "name");
-            } else {
-                optionalRole.get().setName(role.getName().toUpperCase());
-                roleRepo.save(optionalRole.get());
-                return optionalRole.get();
-            }
+            optionalRole.get().setName(role.getName().toUpperCase());
+            roleRepo.save(optionalRole.get());
+            return optionalRole.get();
         } else {
             throw new NotFoundException("Роль с id " + id + " не найдена");
         }

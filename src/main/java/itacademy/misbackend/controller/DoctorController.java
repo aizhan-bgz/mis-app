@@ -7,10 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
 import itacademy.misbackend.dto.DoctorDto;
-import itacademy.misbackend.enums.ResultCode;
-import itacademy.misbackend.enums.ResultCodeAPI;
 import itacademy.misbackend.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,25 +19,6 @@ import java.util.List;
 @RequestMapping("/api/doctors")
 public class DoctorController {
     private final DoctorService doctorService;
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Врач успешно добавлен.",
-                    content = {@Content(mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Не удалось добавить врача.")
-    })
-    @Operation(summary = "Этот роут для добавления врачей.")
-    @PostMapping()
-    public CustomResponseMessage<DoctorDto> create (@RequestBody DoctorDto doctorDto) {
-        return new CustomResponseMessage<>(
-                doctorService.save(doctorDto),
-                ResultCodeAPI.CREATED,
-                null,
-                "success",
-                ResultCode.CREATED);
-    }
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -56,10 +36,9 @@ public class DoctorController {
     public CustomResponseMessage<List<DoctorDto>> getAll () {
         return new CustomResponseMessage<>(
                 doctorService.getAll(),
-                ResultCodeAPI.SUCCESS,
-                null,
-                "Список всех доступных врачей получен",
-                ResultCode.OK);
+                "Список всех доступных врачей получен.",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -78,10 +57,9 @@ public class DoctorController {
     public CustomResponseMessage<DoctorDto> getById (@PathVariable Long id) {
         return new CustomResponseMessage<>(
                 doctorService.getById(id),
-                ResultCodeAPI.SUCCESS,
-                null,
-                "Врач успешно найден",
-                ResultCode.OK);
+                "Врач по id успешно найден.",
+                HttpStatus.OK.value()
+        );
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -100,10 +78,8 @@ public class DoctorController {
     public CustomResponseMessage<DoctorDto> update (@PathVariable Long id, @RequestBody DoctorDto doctorDto) {
         return new CustomResponseMessage<>(
                 doctorService.update(id, doctorDto),
-                ResultCodeAPI.SUCCESS,
-                null,
                 "Врач успешно обновлен",
-                ResultCode.OK);
+                HttpStatus.OK.value());
     }
     @ApiResponses(value = {
             @ApiResponse(
@@ -122,9 +98,8 @@ public class DoctorController {
     public CustomResponseMessage<String> delete (@PathVariable Long id) {
         return new CustomResponseMessage<>(
                 doctorService.delete(id),
-                ResultCodeAPI.SUCCESS,
                 null,
-                "Врач успешно удален",
-                ResultCode.OK);
+                HttpStatus.OK.value()
+        );
     }
 }
