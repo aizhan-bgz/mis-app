@@ -48,6 +48,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(DuplicateValueException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CustomResponseMessage<Object> handleConfirmationCodeMismatchException(ConfirmationCodeMismatchException e) {
+        log.error(e.getMessage());
+        return new CustomResponseMessage<>(
+                null,
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CustomResponseMessage<Object> handleGenericException(Exception e){

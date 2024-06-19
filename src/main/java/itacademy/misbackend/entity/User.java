@@ -27,7 +27,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    private String verificationToken;
+    private String confirmCode;
 
     private boolean isEnabled;
     public User() {

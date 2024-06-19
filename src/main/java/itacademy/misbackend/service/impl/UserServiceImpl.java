@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDto save(UserDto saveUserDto) {
         log.info("СТАРТ: UserServiceImpl - create() {}", saveUserDto);
         saveUserDto.setPassword(passwordEncoder.encode(saveUserDto.getPassword()));
-        saveUserDto.setVerificationToken(UUID.randomUUID().toString());
+        saveUserDto.setConfirmCode(generateConfirmationCode());
         if (userRepo.existsByEmail(saveUserDto.getEmail()) && userRepo.existsByUsername(saveUserDto.getUsername())){
             throw new DuplicateValueException(
                             "Пользователь с указанным email (" + saveUserDto.getEmail() + ")" +
@@ -180,5 +180,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             throw new NotFoundException("Пользователь с email " + email + " не найден");
         }
+    }
+
+    @Override
+    public String generateConfirmationCode() {
+        int code = 1000 + new Random().nextInt(9000);
+        return String.valueOf(code);
     }
 }

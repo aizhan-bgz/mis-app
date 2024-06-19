@@ -36,7 +36,7 @@ public class PasswordResetController {
        passwordResetService.initiatePasswordReset(email);
        return new CustomResponseMessage<>(
                    null,
-                   "Wait for a password reset message to the email you provided.",
+                   "Ожидайте сообщения с кодом, отправленное на электронную почту для сброса пароля",
                    HttpStatus.OK.value()
        );
     }
@@ -53,12 +53,12 @@ public class PasswordResetController {
             "пользователю приходит по почте приходит ссылка с токеном и id, " +
             "на странице он должен ввести новый пароль.")
     @PostMapping("/reset")
-    public CustomResponseMessage<Void> resetPassword(@RequestParam String token, @RequestParam Long id, @RequestParam String newPassword) {
+    public CustomResponseMessage<Void> resetPassword(@RequestParam String confirmCode, @RequestParam Long id, @RequestParam String newPassword) {
 
-        passwordResetService.resetPassword(token, id, newPassword);
+        passwordResetService.resetPassword(confirmCode, id, newPassword);
         return new CustomResponseMessage<>(
                 null,
-                "Password changed successfully",
+                "Пароль успешно изменен. Теперь вы можете войти.",
                 HttpStatus.OK.value()
         );
     }

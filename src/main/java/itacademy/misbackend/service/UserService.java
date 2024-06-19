@@ -18,4 +18,6 @@ public interface UserService {
     String delete(Long id);
 
     Long getUserIdByEmail(String email);
+
+    String generateConfirmationCode();
 }

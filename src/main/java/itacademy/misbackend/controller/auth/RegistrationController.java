@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import itacademy.misbackend.dto.ConfirmRequest;
 import itacademy.misbackend.dto.CustomResponseMessage;
 import itacademy.misbackend.dto.UserDoctorRequest;
 import itacademy.misbackend.dto.UserPatientRequest;
-import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.RegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class RegistrationController {
        return new CustomResponseMessage<>(
                    null,
                "Successful registration. Here is Verification Token: " +
-                        userDoctorRequest.getUser().getVerificationToken() + " User id: " +
+                        userDoctorRequest.getUser().getConfirmCode() + " User id: " +
                         userDoctorRequest.getUser().getId(),
                    HttpStatus.CREATED.value()
        );
@@ -60,9 +60,7 @@ public class RegistrationController {
         registrationService.registerPatient(userPatientRequest);
         return new CustomResponseMessage<>(
                     null,
-                    "Successful registration. Here is Verification Token: " +
-                            userPatientRequest.getUser().getVerificationToken() + " User id: " +
-                            userPatientRequest.getUser().getId(),
+                    "Регистрация прошла успешно. Проверьте почту, на которую отправлен код для подтверждения",
                     HttpStatus.CREATED.value()
         );
     }
@@ -79,11 +77,11 @@ public class RegistrationController {
     @Operation(summary = "Этот роут нужен для подтверждения регистрации пользователя, " +
             "нужно ввести токен подтверждения и id пользователя")
     @GetMapping("/confirm")
-    public CustomResponseMessage<Object> confirm(@RequestParam String token, @RequestParam Long id) {
-       registrationService.confirm(token, id);
+    public CustomResponseMessage<Object> confirm(@RequestBody ConfirmRequest confirmRequest) {
+       registrationService.confirm(confirmRequest);
        return new CustomResponseMessage<>(
                null,
-               "Registration successfully confirmed",
+               "Регистрация потверждена успешна, теперь вы можете войти",
                HttpStatus.OK.value()
        );
     }
