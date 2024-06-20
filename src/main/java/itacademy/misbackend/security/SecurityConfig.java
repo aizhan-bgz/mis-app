@@ -63,7 +63,7 @@ public class SecurityConfig {
                         "/api/services/**", "/api/appointments/**", "/api/medicalRecords/**").hasAuthority("ADMIN");
 
 
-        http.authorizeHttpRequests().anyRequest().permitAll();//Временно
+        http.authorizeHttpRequests().anyRequest().authenticated();
         http.apply(CustomSecurityDetails.customDsl(userRepo));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.logout().logoutUrl("/api/logout").logoutSuccessUrl("/api/login").invalidateHttpSession(true);
