@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itacademy.misbackend.dto.CustomResponseMessage;
+import itacademy.misbackend.dto.UserPasswordReset;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.service.PasswordResetService;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +51,12 @@ public class PasswordResetController {
                     description = "Возникла ошибка при сбросе пароля.")
     })
     @Operation(summary = "Этот роут нужен для cброса и ввода нового пароля пользователя, " +
-            "пользователю приходит по почте приходит ссылка с токеном и id, " +
+            "пользователю приходит по почте приходит 4-х значный код, " +
             "на странице он должен ввести новый пароль.")
     @PostMapping("/reset")
-    public CustomResponseMessage<Void> resetPassword(@RequestParam String confirmCode, @RequestParam Long id, @RequestParam String newPassword) {
+    public CustomResponseMessage<Void> resetPassword(@RequestBody UserPasswordReset userPasswordReset) {
 
-        passwordResetService.resetPassword(confirmCode, id, newPassword);
+        passwordResetService.resetPassword(userPasswordReset);
         return new CustomResponseMessage<>(
                 null,
                 "Пароль успешно изменен. Теперь вы можете войти.",

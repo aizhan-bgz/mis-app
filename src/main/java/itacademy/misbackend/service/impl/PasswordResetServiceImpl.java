@@ -1,6 +1,7 @@
 package itacademy.misbackend.service.impl;
 
 import itacademy.misbackend.dto.EmailMessage;
+import itacademy.misbackend.dto.UserPasswordReset;
 import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.ConfirmationCodeMismatchException;
 import itacademy.misbackend.exception.NotFoundException;
@@ -11,8 +12,6 @@ import itacademy.misbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +35,12 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         emailService.sendPasswordResetMessage(message);
     }
 
-    public void resetPassword(String confirmCode, Long id, String newPassword) {
-        User user = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-        if (!user.getConfirmCode().equals(confirmCode)) {
+    public void resetPassword(UserPasswordReset userPasswordReset) {
+        User user = userRepo.findByEmail(userPasswordReset.getEmail());
+        if (!user.getConfirmCode().equals(userPasswordReset.getConfirmCode())) {
             throw new ConfirmationCodeMismatchException("Неверный код подтверждения");
         }
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(userPasswordReset.getNewPassword()));
         userRepo.save(user);
     }
 
