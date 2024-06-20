@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Registration", description = "Тут находятся все роуты связанные с пациентами")
+@Tag(name = "Registration", description = "Тут находятся все роуты связанные с регистрацией пользователя")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/register")
@@ -73,7 +73,7 @@ public class RegistrationController {
                     description = "Возникла ошибка при подтверждении регистрации.")
     })
     @Operation(summary = "Этот роут нужен для подтверждения регистрации пользователя, " +
-            "нужно ввести токен подтверждения и id пользователя")
+            "На указанную почту приходит 4-х значный код, который нужно будет ввести пользователю")
     @PostMapping("/confirm")
     public CustomResponseMessage<Object> confirm(@RequestBody ConfirmRequest confirmRequest) {
        registrationService.confirm(confirmRequest);
