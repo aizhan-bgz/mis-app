@@ -4,6 +4,7 @@ import itacademy.misbackend.dto.ErrorMessage;
 import itacademy.misbackend.dto.PatientDto;
 import itacademy.misbackend.entity.MedCard;
 import itacademy.misbackend.entity.Patient;
+import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.DuplicateValueException;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.PatientMapper;
@@ -126,5 +127,10 @@ public class PatientServiceImpl implements PatientService {
 
         log.info("КОНЕЦ: PatientServiceImpl - delete(). Пациент (id {}) удален", id);
         return "Пациент с id " + id + " удален";
+    }
+
+    @Override
+    public Patient findByUser(User user) {
+        return patientRepo.findByUser(user);
     }
 }

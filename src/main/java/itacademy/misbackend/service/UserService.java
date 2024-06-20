@@ -1,9 +1,6 @@
 package itacademy.misbackend.service;
 
-import itacademy.misbackend.dto.UpdatedUser;
-import itacademy.misbackend.dto.UserDoctorRequest;
-import itacademy.misbackend.dto.UserDto;
-import itacademy.misbackend.dto.UserPatientRequest;
+import itacademy.misbackend.dto.*;
 
 import java.util.List;
 
@@ -14,10 +11,11 @@ public interface UserService {
     UserDto getById(Long id);
     List<UserDto> getAll();
     void addRole(Long id, String role);
-    UserDto update(Long id, UpdatedUser updatedUser);
     String delete(Long id);
 
     Long getUserIdByEmail(String email);
 
     String generateConfirmationCode();
+
+    UserTokenData getUserFromToken(String token);
 }

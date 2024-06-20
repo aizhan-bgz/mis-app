@@ -1,6 +1,10 @@
 package itacademy.misbackend.service.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import itacademy.misbackend.dto.*;
+import itacademy.misbackend.entity.Doctor;
+import itacademy.misbackend.entity.Patient;
 import itacademy.misbackend.entity.Role;
 import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.DuplicateValueException;
@@ -155,21 +159,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepo.save(user);
     }
 
-
-    @Override
-    public UserDto update(Long id, UpdatedUser userDto) {
-        User user = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь с id " + id + " не найден");
-        } else {
-            if (userDto.getRoles() != null) {
-                user.setRoles(userDto.getRoles());
-            }
-            user = userRepo.save(user);
-            return userMapper.toDto(user);
-        }
-    }
-
     @Override
     public String delete(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -178,6 +167,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
+
+        Doctor doctor = doctorService.findByUser(user);
+        Patient patient = patientService.findByUser(user);
+
+        if (doctor != null) {
+            doctorService.delete(doctor.getId());
+        }
+
+        if (patient != null) {
+            patient.setUser(null);
+            patientRepo.save(patient);
+        }
+
         user.setDeletedAt(LocalDateTime.now());
         user.setDeletedBy(authentication.getName());
         userRepo.save(user);
@@ -197,5 +199,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public String generateConfirmationCode() {
         int code = 1000 + new Random().nextInt(9000);
         return String.valueOf(code);
+    }
+
+    @Override
+    public UserTokenData getUserFromToken(String token) {
+        UserTokenData userTokenData = new UserTokenData();
+        DecodedJWT jwt = JWT.decode(token);
+
+        String username = jwt.getSubject();
+
+        User user = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndUsername(username);
+
+        if (user == null){
+            throw new NotFoundException("Пользователь не найден");
+        }
+        userTokenData.setId(user.getId());
+        userTokenData.setUsername(user.getUsername());
+        userTokenData.setRoles(user.getRoles());
+        return userTokenData;
     }
 }
