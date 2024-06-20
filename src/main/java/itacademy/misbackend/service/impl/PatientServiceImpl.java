@@ -1,8 +1,10 @@
 package itacademy.misbackend.service.impl;
 
+import itacademy.misbackend.dto.ErrorMessage;
 import itacademy.misbackend.dto.PatientDto;
 import itacademy.misbackend.entity.MedCard;
 import itacademy.misbackend.entity.Patient;
+import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.DuplicateValueException;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.PatientMapper;
@@ -33,21 +35,6 @@ public class PatientServiceImpl implements PatientService {
         log.info("СТАРТ: PatientServiceImpl - create() {}", patientDto);
         Patient patient = patientMapper.toEntity(patientDto);
         patient.setUser(userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(patientDto.getUserId()));
-        if (patientRepo.existsByPassport(patientDto.getPassport()) && patientRepo.existsByTaxId(patientDto.getTaxId())){
-            throw new DuplicateValueException(
-                    "Пациент с указанным паспортом и ИНН уже существует"
-            );
-        }
-        if(patientRepo.existsByPassport(patientDto.getPassport())){
-            throw new DuplicateValueException(
-                    "Пациент с указанным паспортом уже существует"
-            );
-        }
-        if (patientRepo.existsByTaxId(patientDto.getTaxId())){
-            throw new DuplicateValueException(
-                    "Пациент с указанным ИНН уже существует"
-            );
-        }
         patient = patientRepo.save(patient);
 
         MedCard medCard = new MedCard();
@@ -85,6 +72,7 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public PatientDto update(Long id, PatientDto patientDto) {
         log.info("СТАРТ: PatientServiceImpl - update(). Пациент с id {}", id);
+        ErrorMessage errorMessage = new ErrorMessage();
         Patient patient = patientRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
         if (patient == null) {
             throw new NotFoundException("Пациент с id " + id + " не найден");
@@ -98,22 +86,21 @@ public class PatientServiceImpl implements PatientService {
         if (patientDto.getPassport() != null && !patientRepo.existsByPassport(patientDto.getPassport())){
             patient.setPassport(patientDto.getPassport());
         } else {
-            throw new DuplicateValueException(
-                    "Пациент с указанным паспортом (" + patientDto.getPassport() + ") уже существует"
-            );
+            errorMessage.addError("passport", "Пациент с указанным паспортом уже существует");
         }
         if (patientDto.getTaxId() != null && !patientRepo.existsByTaxId(patientDto.getTaxId())){
             patient.setTaxId(patientDto.getTaxId());
         } else {
-            throw new DuplicateValueException(
-                    "Пациент с указанным ИНН (" + patientDto.getTaxId() + ") уже существует"
-            );
+            errorMessage.addError("taxId: ","Пациент с указанным ИНН (" + patientDto.getTaxId() + ") уже существует");
         }
         if (patientDto.getAddress() != null){
             patient.setAddress(patientDto.getAddress());
         }
         if (patientDto.getPlaceOfWork() != null){
             patient.setPlaceOfWork(patientDto.getPlaceOfWork());
+        }
+        if (!errorMessage.getErrors().isEmpty()) {
+            throw new DuplicateValueException(errorMessage);
         }
         patient = patientRepo.save(patient);
         log.info("КОНЕЦ: PatientServiceImpl - update(). Обновленная запись - {}", patient);
@@ -140,5 +127,10 @@ public class PatientServiceImpl implements PatientService {
 
         log.info("КОНЕЦ: PatientServiceImpl - delete(). Пациент (id {}) удален", id);
         return "Пациент с id " + id + " удален";
+    }
+
+    @Override
+    public Patient findByUser(User user) {
+        return patientRepo.findByUser(user);
     }
 }

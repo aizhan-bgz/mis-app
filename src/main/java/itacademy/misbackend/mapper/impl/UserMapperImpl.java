@@ -32,7 +32,7 @@ public class UserMapperImpl implements UserMapper {
                 .password(userDto.getPassword())
                 .email(userDto.getEmail())
                 .isEnabled(userDto.isEnabled())
-                .verificationToken(userDto.getVerificationToken())
+                .confirmCode(userDto.getConfirmCode())
                 .build();
         return user;
     }

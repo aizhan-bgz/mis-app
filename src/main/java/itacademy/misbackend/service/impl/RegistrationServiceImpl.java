@@ -1,10 +1,14 @@
 package itacademy.misbackend.service.impl;
 
+import itacademy.misbackend.dto.ConfirmRequest;
 import itacademy.misbackend.dto.EmailMessage;
 import itacademy.misbackend.dto.UserDoctorRequest;
 import itacademy.misbackend.dto.UserPatientRequest;
 import itacademy.misbackend.entity.User;
+import itacademy.misbackend.exception.ConfirmationCodeMismatchException;
+import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.repo.UserRepo;
+import itacademy.misbackend.service.EmailService;
 import itacademy.misbackend.service.RegistrationService;
 import itacademy.misbackend.service.UserService;
 import jakarta.transaction.Transactional;
@@ -14,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final UserService userService;
     private final UserRepo userRepo;
     @Transactional
@@ -24,8 +28,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         EmailMessage message = new EmailMessage();
         message.setEmail(user.getUser().getEmail());
-        message.setVerificationToken(user.getUser().getVerificationToken());
-//        emailService.sendRegistrationMessage(message);
+        message.setConfirmCode(user.getUser().getConfirmCode());
+        emailService.sendRegistrationMessage(message);
     }
     @Transactional
     @Override
@@ -33,16 +37,20 @@ public class RegistrationServiceImpl implements RegistrationService {
         UserPatientRequest user = userService.createPatient(userPatientRequest);
         EmailMessage message = new EmailMessage();
         message.setEmail(user.getUser().getEmail());
-        message.setVerificationToken(user.getUser().getVerificationToken());
-//        emailService.sendRegistrationMessage(message);
+        message.setConfirmCode(user.getUser().getConfirmCode());
+        emailService.sendRegistrationMessage(message);
     }
 
     @Override
-    public void confirm(String token, Long id) {
-        User user = userRepo.findByDeletedAtIsNullAndDeletedByIsNullAndId(id);
-        if (user.getVerificationToken().equals(token)) {
-            user.setEnabled(true);
-            userRepo.save(user);
+    public void confirm(ConfirmRequest confirmRequest) {
+        User user = userRepo.findByEmail(confirmRequest.getEmail());
+        if (user == null){
+            throw new NotFoundException("Пользователь не найден");
         }
+        if (!user.getConfirmCode().equals(confirmRequest.getConfirmCode())) {
+            throw new ConfirmationCodeMismatchException("Неверный код подтверждения");
+        }
+        user.setEnabled(true);
+        userRepo.save(user);
     }
 }

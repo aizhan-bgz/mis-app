@@ -35,6 +35,6 @@ public class UserDto {
     private String email;
 
     private boolean enabled;
-    private String verificationToken;
+    private String confirmCode;
     private Set<Role> roles;
 }

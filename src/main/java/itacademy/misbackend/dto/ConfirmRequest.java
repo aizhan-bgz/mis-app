@@ -5,9 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class EmailMessage {
+@NoArgsConstructor
+public class ConfirmRequest {
     private String email;
     private String confirmCode;
 }

@@ -3,6 +3,7 @@ package itacademy.misbackend.service.impl;
 import itacademy.misbackend.dto.DoctorDto;
 import itacademy.misbackend.entity.Department;
 import itacademy.misbackend.entity.Doctor;
+import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.DoctorMapper;
 import itacademy.misbackend.repo.DepartmentRepo;
@@ -110,5 +111,10 @@ public class DoctorServiceImpl implements DoctorService {
         doctorRepo.save(doctor);
         log.info("КОНЕЦ: DoctorServiceImpl - delete(). Врач (id {}) удален", id);
         return "Врач с id " + id + " удален";
+    }
+
+    @Override
+    public Doctor findByUser(User user) {
+        return doctorRepo.findByUser(user);
     }
 }
