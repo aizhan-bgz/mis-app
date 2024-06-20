@@ -1,13 +1,13 @@
 package itacademy.misbackend.exception;
 
 import itacademy.misbackend.dto.CustomResponseMessage;
+import itacademy.misbackend.dto.ErrorMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -16,12 +16,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CustomResponseMessage<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        ErrorMessage errorMessage = new ErrorMessage();
+        e.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String message = error.getDefaultMessage();
+            errorMessage.addError(fieldName, message);
+        });
         log.error(e.getMessage());
         return new CustomResponseMessage<>(
-                null,
-                "Ошибка валидации: " + e.getBindingResult().getAllErrors().stream()
-                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .collect(Collectors.joining(", ")),
+                         errorMessage,
+                "Ошибка валидации.",
                  HttpStatus.BAD_REQUEST.value()
         );
     }
@@ -40,15 +44,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CustomResponseMessage<Object> handleDuplicateValueException(DuplicateValueException e) {
-        log.error(e.getMessage());
+        log.error(String.valueOf(e.getErrorMessage()));
         return new CustomResponseMessage<>(
+                e.getErrorMessage(),
                 null,
-                e.getMessage(),
                 HttpStatus.BAD_REQUEST.value()
         );
     }
 
-    @ExceptionHandler(DuplicateValueException.class)
+    @ExceptionHandler(ConfirmationCodeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CustomResponseMessage<Object> handleConfirmationCodeMismatchException(ConfirmationCodeMismatchException e) {
         log.error(e.getMessage());

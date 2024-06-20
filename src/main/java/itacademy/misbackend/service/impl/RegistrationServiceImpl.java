@@ -6,7 +6,9 @@ import itacademy.misbackend.dto.UserDoctorRequest;
 import itacademy.misbackend.dto.UserPatientRequest;
 import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.ConfirmationCodeMismatchException;
+import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.repo.UserRepo;
+import itacademy.misbackend.service.EmailService;
 import itacademy.misbackend.service.RegistrationService;
 import itacademy.misbackend.service.UserService;
 import jakarta.transaction.Transactional;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final UserService userService;
     private final UserRepo userRepo;
     @Transactional
@@ -42,6 +44,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void confirm(ConfirmRequest confirmRequest) {
         User user = userRepo.findByEmail(confirmRequest.getEmail());
+        if (user == null){
+            throw new NotFoundException("Пользователь не найден");
+        }
         if (!user.getConfirmCode().equals(confirmRequest.getConfirmCode())) {
             throw new ConfirmationCodeMismatchException("Неверный код подтверждения");
         }

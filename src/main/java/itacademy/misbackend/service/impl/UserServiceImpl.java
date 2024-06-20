@@ -6,6 +6,7 @@ import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.DuplicateValueException;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.mapper.UserMapper;
+import itacademy.misbackend.repo.PatientRepo;
 import itacademy.misbackend.repo.UserRepo;
 import itacademy.misbackend.service.DoctorService;
 import itacademy.misbackend.service.PatientService;
@@ -34,6 +35,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepo userRepo;
     private final UserMapper userMapper;
+    private final PatientRepo patientRepo;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final DoctorService doctorService;
@@ -55,22 +57,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("СТАРТ: UserServiceImpl - create() {}", saveUserDto);
         saveUserDto.setPassword(passwordEncoder.encode(saveUserDto.getPassword()));
         saveUserDto.setConfirmCode(generateConfirmationCode());
-        if (userRepo.existsByEmail(saveUserDto.getEmail()) && userRepo.existsByUsername(saveUserDto.getUsername())){
-            throw new DuplicateValueException(
-                            "Пользователь с указанным email (" + saveUserDto.getEmail() + ")" +
-                            "и username (" + saveUserDto.getUsername() + ") уже существует."
-            );
-        }
-        if (userRepo.existsByEmail(saveUserDto.getEmail())) {
-            throw new DuplicateValueException(
-                    "Пользователь с указанным email (" + saveUserDto.getEmail() + ") уже существует."
-            );
-        }
-        if (userRepo.existsByUsername(saveUserDto.getUsername())){
-            throw new DuplicateValueException(
-                    "Пользователь с указанным username (" + saveUserDto.getUsername() + ") уже существует."
-            );
-        }
         User user = userMapper.toEntity(saveUserDto);
         var roles = new HashSet<Role>();
         user.setRoles(roles);
@@ -82,6 +68,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public UserDoctorRequest createDoctor(UserDoctorRequest userDoctorRequest) {
+        ErrorMessage errorMessage = new ErrorMessage();
+        if (userRepo.existsByUsername(userDoctorRequest.getUser().getUsername())){
+            errorMessage.addError("username", "Пользователь с указанным username уже существует.");
+        }
+        if (userRepo.existsByEmail(userDoctorRequest.getUser().getEmail())){
+            errorMessage.addError("email", "Пользователь с указанным email уже существует.");
+        }
+        if (!errorMessage.getErrors().isEmpty()) {
+            throw new DuplicateValueException(errorMessage);
+        }
         UserDto user = save(userDoctorRequest.getUser());
         addRole(user.getId(), "DOCTOR");
         DoctorDto doctor = userDoctorRequest.getDoctor();
@@ -95,6 +91,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public UserPatientRequest createPatient(UserPatientRequest userPatientRequest) {
+        ErrorMessage errorMessage = new ErrorMessage();
+        if (userRepo.existsByUsername(userPatientRequest.getUser().getUsername())){
+            errorMessage.addError("username", "Пользователь с указанным username уже существует.");
+        }
+        if (userRepo.existsByEmail(userPatientRequest.getUser().getEmail())){
+            errorMessage.addError("email", "Пользователь с указанным email уже существует.");
+        }
+        if (patientRepo.existsByPassport(userPatientRequest.getPatient().getPassport())){
+            errorMessage.addError("passport", "Пациент с указанным паспортом уже существует");
+        }
+        if (patientRepo.existsByTaxId(userPatientRequest.getPatient().getTaxId())){
+            errorMessage.addError("taxId","Пациент с указанным ИНН уже существует");
+        }
+        if (!errorMessage.getErrors().isEmpty()) {
+            throw new DuplicateValueException(errorMessage);
+        }
         UserDto user = save(userPatientRequest.getUser());
         addRole(user.getId(), "PATIENT");
         PatientDto patient = userPatientRequest.getPatient();
@@ -104,7 +116,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userPatientRequest.getPatient().setId(patient.getId());
         return userPatientRequest;
     }
-
     @Override
     public UserDto getById(Long id) {
         log.info("СТАРТ: UserServiceImpl - getById({})", id);

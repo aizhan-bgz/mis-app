@@ -5,6 +5,7 @@ import itacademy.misbackend.entity.User;
 import itacademy.misbackend.exception.ConfirmationCodeMismatchException;
 import itacademy.misbackend.exception.NotFoundException;
 import itacademy.misbackend.repo.UserRepo;
+import itacademy.misbackend.service.EmailService;
 import itacademy.misbackend.service.PasswordResetService;
 import itacademy.misbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class PasswordResetServiceImpl implements PasswordResetService {
     private final UserRepo userRepo;
     private final UserService userService;
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
     public void initiatePasswordReset(String email) {
