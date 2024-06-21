@@ -39,8 +39,8 @@ public class PatientServiceImpl implements PatientService {
 
         MedCard medCard = new MedCard();
         medCard.setId(patient.getId());
-        medCard.setPatient(patient.getFirstName() + " " +
-                            patient.getLastName() + " " +
+        medCard.setPatient(patient.getLastName() + " " +
+                            patient.getFirstName()+ " " +
                             patient.getPatronymic());
         medCardRepo.save(medCard);
         log.info("КОНЕЦ: PatientServiceImpl - create {} ", patientMapper.toDto(patient));
@@ -83,15 +83,23 @@ public class PatientServiceImpl implements PatientService {
         if (patientDto.getSex() != null){
             patient.setSex(patientDto.getSex());
         }
-        if (patientDto.getPassport() != null && !patientRepo.existsByPassport(patientDto.getPassport())){
-            patient.setPassport(patientDto.getPassport());
+        if (patientDto.getPassport() != null) {
+            if (!patientRepo.existsByPassport(patientDto.getPassport())) {
+                patient.setPassport(patientDto.getPassport());
+            } else {
+                errorMessage.addError("passport", "Пациент с указанным паспортом уже существует");
+            }
         } else {
-            errorMessage.addError("passport", "Пациент с указанным паспортом уже существует");
+            errorMessage.addError("passport", "Паспорт не может быть пустым");
         }
-        if (patientDto.getTaxId() != null && !patientRepo.existsByTaxId(patientDto.getTaxId())){
-            patient.setTaxId(patientDto.getTaxId());
+        if (patientDto.getTaxId() != null) {
+            if (!patientRepo.existsByTaxId(patientDto.getTaxId())) {
+                patient.setTaxId(patientDto.getTaxId());
+            } else {
+                errorMessage.addError("taxId", "Пациент с указанным ИНН (" + patientDto.getTaxId() + ") уже существует");
+            }
         } else {
-            errorMessage.addError("taxId: ","Пациент с указанным ИНН (" + patientDto.getTaxId() + ") уже существует");
+            errorMessage.addError("taxId", "ИНН не может быть пустым");
         }
         if (patientDto.getAddress() != null){
             patient.setAddress(patientDto.getAddress());

@@ -79,7 +79,7 @@ public class RegistrationController {
        registrationService.confirm(confirmRequest);
        return new CustomResponseMessage<>(
                null,
-               "Регистрация потверждена успешна, теперь вы можете войти",
+               "Регистрация подтверждена, теперь вы можете войти в систему",
                HttpStatus.OK.value()
        );
     }
