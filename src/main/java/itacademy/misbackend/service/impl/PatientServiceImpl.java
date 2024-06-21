@@ -40,7 +40,7 @@ public class PatientServiceImpl implements PatientService {
         MedCard medCard = new MedCard();
         medCard.setId(patient.getId());
         medCard.setPatient(patient.getLastName() + " " +
-                            patient.getFirstName()+ " " +
+                            patient.getFirstName() + " " +
                             patient.getPatronymic());
         medCardRepo.save(medCard);
         log.info("КОНЕЦ: PatientServiceImpl - create {} ", patientMapper.toDto(patient));
@@ -92,6 +92,7 @@ public class PatientServiceImpl implements PatientService {
         } else {
             errorMessage.addError("passport", "Паспорт не может быть пустым");
         }
+
         if (patientDto.getTaxId() != null) {
             if (!patientRepo.existsByTaxId(patientDto.getTaxId())) {
                 patient.setTaxId(patientDto.getTaxId());
@@ -101,6 +102,7 @@ public class PatientServiceImpl implements PatientService {
         } else {
             errorMessage.addError("taxId", "ИНН не может быть пустым");
         }
+
         if (patientDto.getAddress() != null){
             patient.setAddress(patientDto.getAddress());
         }
