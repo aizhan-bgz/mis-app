@@ -58,10 +58,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/medicalRecords/**").hasAuthority("DOCTOR")
                 .requestMatchers(HttpMethod.PUT, "/api/medicalRecords/**").hasAuthority("DOCTOR");
 
-        //закомментила, т.к. пока нет юзера с ролью ADMIN
+
         http.authorizeHttpRequests().requestMatchers("/api/patients/**", "/api/doctors/**", "/api/departments/**",
                         "/api/services/**", "/api/appointments/**", "/api/medicalRecords/**").hasAuthority("ADMIN");
 
+        http.authorizeHttpRequests().requestMatchers("/api/patients/**", "/api/doctors/**", "/api/departments/**",
+                "/api/services/**", "/api/appointments/**", "/api/medicalRecords/**").hasAuthority("PATIENT");
 
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.apply(CustomSecurityDetails.customDsl(userRepo));
